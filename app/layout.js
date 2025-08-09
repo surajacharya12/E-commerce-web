@@ -17,10 +17,10 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const hideFooter = pathname.startsWith("/signin") || pathname.startsWith("/signup");
+  
   return (
     <html lang="en">
       <body

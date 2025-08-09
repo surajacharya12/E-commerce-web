@@ -1,30 +1,18 @@
 "use client";
 
 import { FiTwitter, FiFacebook, FiLinkedin, FiYoutube } from "react-icons/fi";
+import Image from "next/image";
 
 const Footer = () => (
   <footer className="w-full bg-gray-50 border-t border-gray-300 py-8 mt-16 shadow-inner">
     <div className="max-w-7xl mx-auto px-6">
       <div className="flex flex-col items-center mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <span className="inline-block bg-blue-100 p-3 rounded-full shadow-md">
+        <div className="flex items-center -space-x-2 mb-3"> 
+
+         
             {/* Logo */}
-            <svg
-              width="36"
-              height="36"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="stroke-blue-600"
-            >
-              <path
-                d="M7 18V7a5 5 0 0 1 10 0v11"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <rect x="2" y="18" width="20" height="4" rx="2" fill="#3b82f6" />
-            </svg>
-          </span>
+             <Image src="/assets/logo.png" alt="Logo" width={106} height={106} className="rounded-lg" />
+        
           <span className="font-extrabold text-3xl text-gray-800 tracking-wide">
             ShopEase
           </span>
@@ -71,8 +59,9 @@ const Footer = () => (
               { label: "Browse", href: "/browse" },
               { label: "Categories", href: "/categories" },
               { label: "Wishlist", href: "/wishlist" },
-              { label: "Privacy Policy", href: "#" },
+              { label: "Privacy Policy", href: "/privacyPolicy" },
               { label: "Seller Centre", href: "#" },
+              {label:"Profile", href: "/profile"}
             ].map(({ label, href }) => (
               <li key={label}>
                 <a
@@ -93,22 +82,22 @@ const Footer = () => (
           </h3>
           <div className="flex flex-wrap gap-4 items-center">
             <img
-              src="/visa.svg"
+              src="/assets/visa.png"
               alt="Visa"
               className="h-8 filter grayscale hover:grayscale-0 transition duration-300 cursor-pointer"
             />
             <img
-              src="/mastercard.svg"
+              src="/assets/mastercard.png"
               alt="Mastercard"
               className="h-8 filter grayscale hover:grayscale-0 transition duration-300 cursor-pointer"
             />
             <img
-              src="/amex.svg"
+              src="/assets/amex.png"
               alt="Amex"
               className="h-8 filter grayscale hover:grayscale-0 transition duration-300 cursor-pointer"
             />
             <img
-              src="/paypal.svg"
+              src="/assets/paypal.png"
               alt="Paypal"
               className="h-8 filter grayscale hover:grayscale-0 transition duration-300 cursor-pointer"
             />

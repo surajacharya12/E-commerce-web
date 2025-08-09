@@ -4,11 +4,18 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { FiSearch, FiBell, FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 import Image from "next/image";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBellActive, setIsBellActive] = useState(false);
   const pathname = usePathname();
+  const { isLoggedIn, userEmail, logout } = useAuth();
+
+  const handleSignOut = () => {
+    logout();
+    window.location.href = "/signin";
+  };
 
   const navLinks = [
     { name: "Browse", href: "/browse" },
@@ -22,10 +29,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 transition-all duration-300">
         {/* Left Section: Logo */}
         <div className="flex items-center gap-3">
-          
-            <Image src="/logo.svg" alt="Logo" width={36} height={36} className="rounded-lg" />
-         
-          <span className="font-extrabold text-2xl text-gray-900 tracking-tight drop-shadow-sm">ShopEase</span>
+
+          <Image src="/assets/logo.png" alt="Logo" width={106} height={106} className="rounded-lg" />
+
+
         </div>
 
         {/* Search Bar - Always Visible, Responsive */}
@@ -70,37 +77,46 @@ const Navbar = () => {
               ${isBellActive ? "bg-blue-100 ring-2 ring-blue-400" : "hover:bg-blue-100"}`}
             onClick={() => setIsBellActive(!isBellActive)}
           >
-             <a
-            href="/cart"
-            className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center
+            <a
+              href="/cart"
+              className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center
               ${pathname === "/cart" ? "bg-blue-100 ring-2 ring-blue-400" : "hover:bg-blue-100"}`}
-          >
-            <FiShoppingCart className={`w-6 h-6 ${pathname === "/cart" ? "text-blue-600" : "text-blue-500"}`} />
-          </a>
+            >
+              <FiShoppingCart className={`w-6 h-6 ${pathname === "/cart" ? "text-blue-600" : "text-blue-500"}`} />
+            </a>
           </button>
           <button
-          aria-label="Notifications"
+            aria-label="Notifications"
             className={`p-2 rounded-full transition-colors shadow-sm
               ${isBellActive ? "bg-blue-100 ring-2 ring-blue-400" : "hover:bg-blue-100"}`}
             onClick={() => setIsBellActive(!isBellActive)}>
-               <a
-            href="/reminder"
-            className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center
+            <a
+              href="/reminder"
+              className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center
               ${pathname === "/reminder" ? "bg-blue-100 ring-2 ring-blue-400" : "hover:bg-blue-100"}`}
-          >
-            <FiBell className={`w-6 h-6 ${pathname === "reminder" ? "text-blue-600" : "text-blue-500"}`} />
+            >
+              <FiBell className={`w-6 h-6 ${pathname === "reminder" ? "text-blue-600" : "text-blue-500"}`} />
             </a>
           </button>
-       
 
-          {/* Sign In - Desktop */}
-          <a
-            href="/signin"
-            className={`hidden md:inline-flex items-center bg-gradient-to-tr from-blue-600 via-purple-600 to-pink-600 text-white text-base font-semibold px-5 py-2 rounded-xl shadow-md transition
-              ${pathname === "/signin" ? "ring-2 ring-pink-400 scale-105 shadow-lg" : "hover:scale-105 hover:shadow-lg"}`}
-          >
-            Sign in
-          </a>
+
+          {/* Sign In/Out - Desktop */}
+          {isLoggedIn ? (
+            <button
+              onClick={handleSignOut}
+              className="hidden md:inline-flex items-center bg-gradient-to-tr from-pink-600 via-purple-600 to-blue-600 text-white text-base font-semibold px-5 py-2 rounded-xl shadow-md transition hover:scale-105 hover:shadow-lg"
+            >
+              Logout
+            </button>
+          ) : (
+            <a
+              href="/signin"
+              className={`hidden md:inline-flex items-center bg-gradient-to-tr from-blue-600 via-purple-600 to-pink-600 text-white text-base font-semibold px-5 py-2 rounded-xl shadow-md transition
+                ${pathname === "/signin" ? "ring-2 ring-pink-400 scale-105 shadow-lg" : "hover:scale-105 hover:shadow-lg"}`}
+            >
+              Sign in
+            </a>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
@@ -138,9 +154,21 @@ const Navbar = () => {
             </a>
           ))}
           <hr className="border-gray-100" />
-          <button className="w-full bg-gradient-to-tr from-blue-600 via-purple-600 to-pink-600 text-white px-5 py-3 rounded-xl font-semibold shadow-md hover:scale-105 hover:shadow-lg transition">
-            Sign in
-          </button>
+          {isLoggedIn ? (
+            <button
+              className="w-full bg-gradient-to-tr from-pink-600 via-purple-600 to-blue-600 text-white px-5 py-3 rounded-xl font-semibold shadow-md hover:scale-105 hover:shadow-lg transition"
+              onClick={handleSignOut}
+            >
+              Logout
+            </button>
+          ) : (
+            <a
+              href="/signin"
+              className="w-full bg-gradient-to-tr from-blue-600 via-purple-600 to-pink-600 text-white px-5 py-3 rounded-xl font-semibold shadow-md hover:scale-105 hover:shadow-lg transition text-center block"
+            >
+              Sign in
+            </a>
+          )}
         </div>
       )}
     </nav>
