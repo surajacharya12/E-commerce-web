@@ -7,12 +7,12 @@ const Footer = () => (
   <footer className="w-full bg-gray-50 border-t border-gray-300 py-8 mt-16 shadow-inner">
     <div className="max-w-7xl mx-auto px-6">
       <div className="flex flex-col items-center mb-8">
-        <div className="flex items-center -space-x-2 mb-3"> 
+        <div className="flex items-center -space-x-2 mb-3">
 
-         
-            {/* Logo */}
-             <Image src="/assets/logo.png" alt="Logo" width={106} height={106} className="rounded-lg" />
-        
+
+          {/* Logo */}
+          <Image src="/assets/logo.png" alt="Logo" width={106} height={106} className="rounded-lg" />
+
           <span className="font-extrabold text-3xl text-gray-800 tracking-wide">
             ShopEase
           </span>
@@ -60,8 +60,8 @@ const Footer = () => (
               { label: "Categories", href: "/categories" },
               { label: "Wishlist", href: "/wishlist" },
               { label: "Privacy Policy", href: "/privacyPolicy" },
-              { label: "Seller Centre", href: "#" },
-              {label:"Profile", href: "/profile"}
+              { label: "Seller Centre", href: "/SellerCentre" },
+              { label: "Profile", href: "/profile" }
             ].map(({ label, href }) => (
               <li key={label}>
                 <a
