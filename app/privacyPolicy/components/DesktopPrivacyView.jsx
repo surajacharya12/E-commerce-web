@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { FiShield, FiLock, FiEye, FiUsers, FiSettings, FiMail, FiChevronRight, FiHome } from "react-icons/fi";
+import { ContactUs } from "./contact";
 
 const DesktopPrivacyView = () => {
     const [activeSection, setActiveSection] = useState(1);
@@ -326,37 +327,7 @@ const DesktopPrivacyView = () => {
                                         <FiMail className="w-6 h-6 text-blue-600" />
                                         <h2 className="text-3xl font-bold text-blue-600">7. Contact Us</h2>
                                     </div>
-
-                                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white mb-6">
-                                        <h3 className="text-2xl font-bold mb-4">Get in Touch</h3>
-                                        <p className="text-blue-100 text-lg mb-6 leading-relaxed">
-                                            If you have any questions, concerns, or requests regarding this Privacy Policy or
-                                            how we handle your personal information, we're here to help.
-                                        </p>
-
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="bg-white/20 rounded-xl p-6">
-                                                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                                                    <FiMail className="w-5 h-5" />
-                                                    Email Support
-                                                </h4>
-                                                <a
-                                                    href="mailto:support@shopease.com"
-                                                    className="text-blue-100 hover:text-white transition-colors"
-                                                >
-                                                    support@shopease.com
-                                                </a>
-                                            </div>
-
-                                            <div className="bg-white/20 rounded-xl p-6">
-                                                <h4 className="font-semibold mb-3">Response Time</h4>
-                                                <p className="text-blue-100">
-                                                    We typically respond within 24-48 hours
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    <ContactUs />
                                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
                                         <p className="text-gray-600 text-center">
                                             <strong>Last updated:</strong> {currentDate}

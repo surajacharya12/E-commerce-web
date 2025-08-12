@@ -28,12 +28,19 @@ export const useProfileData = (isLoggedIn, userEmail, loading) => {
       }
 
       try {
-        const response = await fetch(`http://localhost:3001/users/`, {
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        
+        const response = await fetch("http://localhost:3001/users/", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           const data = await response.json();
@@ -64,6 +71,12 @@ export const useProfileData = (isLoggedIn, userEmail, loading) => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
+        
+        // Check if it's a network error
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          console.warn("Backend server appears to be offline. Using fallback data.");
+        }
+        
         const fallbackUser = {
           name: localStorage.getItem("userName") || "User",
           email: userEmail || localStorage.getItem("userEmail") || "",
@@ -74,7 +87,13 @@ export const useProfileData = (isLoggedIn, userEmail, loading) => {
         };
         setUser(fallbackUser);
         setEditedUser(fallbackUser);
-        toast.warning("Using cached profile data. Please check your connection.");
+        
+        // Only show warning if we have some cached data, otherwise show error
+        if (fallbackUser.name !== "User" || fallbackUser.email) {
+          toast.warning("Using cached profile data. Backend server may be offline.");
+        } else {
+          toast.error("Unable to load profile data. Please ensure the backend server is running.");
+        }
       }
     };
 

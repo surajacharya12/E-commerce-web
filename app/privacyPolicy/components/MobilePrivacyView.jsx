@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { FiShield, FiLock, FiEye, FiUsers, FiSettings, FiMail } from "react-icons/fi";
+import { ContactUs } from "./contact";
 
 const MobilePrivacyView = () => {
     const [currentDate, setCurrentDate] = useState('January 2025');
@@ -129,22 +130,8 @@ const MobilePrivacyView = () => {
                     </p>
                 </div>
 
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
-                    <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-                        <FiMail className="w-5 h-5" />
-                        7. Contact Us
-                    </h2>
-                    <p className="text-blue-100 text-sm leading-relaxed mb-4">
-                        If you have any questions or concerns about your privacy, please contact us:
-                    </p>
-                    <a
-                        href="mailto:support@shopease.com"
-                        className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"
-                    >
-                        <FiMail className="w-4 h-4" />
-                        support@shopease.com
-                    </a>
-                </div>
+                <ContactUs />
+
             </div>
 
             {/* Footer */}
