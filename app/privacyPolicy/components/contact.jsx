@@ -167,7 +167,7 @@ export const ContactUs = () => {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
                     <FiMail className="w-8 h-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">Contact Us</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-3">Get in Touch</h1>
                 <p className="text-gray-600 text-sm leading-relaxed max-w-sm mx-auto">
                     Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
                 </p>

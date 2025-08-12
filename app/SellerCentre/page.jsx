@@ -8,8 +8,6 @@ const storesData = [
         id: 1,
         name: "Globetrotter Goods",
         category: "Outdoor & Adventure",
-        rating: 4.9,
-        sales: "2.3M",
         badge: "Top Seller",
         description: "Your ultimate destination for outdoor adventures and exploration gear. We specialize in high-quality equipment for hiking, camping, and extreme sports, ensuring you're prepared for any adventure life throws your way.",
         manager: {
