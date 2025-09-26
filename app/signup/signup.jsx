@@ -157,7 +157,7 @@ const SignUp = () => {
 
               <div>
                 <label htmlFor="phone" className="block text-gray-700 mb-2 font-semibold">
-                  Phone Number (Optional)
+                  Phone Number 
                 </label>
                 <input
                   type="tel"
