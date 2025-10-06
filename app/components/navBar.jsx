@@ -134,6 +134,7 @@ const Navbar = () => {
     { name: "Live Shopping", href: "/live-shopping" },
     { name: "Categories", href: "/categories" },
     { name: "Wishlist", href: "/wishlist" },
+    { name: "Help", href: "/help-center" },
   ];
 
   return (

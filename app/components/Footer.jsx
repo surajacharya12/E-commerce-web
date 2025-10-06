@@ -31,18 +31,19 @@ const Footer = () => (
           </h3>
           <ul className="space-y-3 text-sm">
             {[
-              "Help Centre",
-              "How To Buy",
-              "Payment",
-              "Shipping",
-              "Return & Refund",
-            ].map((item) => (
-              <li key={item}>
+              { label: "Help Centre", href: "/help-center" },
+              { label: "Customer Service", href: "/customer-service" },
+              { label: "How To Buy", href: "/how-to-buy" },
+              { label: "Payment", href: "/payment" },
+              { label: "Shipping", href: "/shipping" },
+              { label: "Return & Refund", href: "/return-refund" },
+            ].map(({ label, href }) => (
+              <li key={label}>
                 <a
-                  href="#"
+                  href={href}
                   className="hover:text-blue-600 transition-colors duration-200"
                 >
-                  {item}
+                  {label}
                 </a>
               </li>
             ))}
