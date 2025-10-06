@@ -30,7 +30,7 @@ const Login = () => {
 
             if (response.ok && data.success) {
                 // Use the login function from useAuth hook
-                login(data.data.user.email, null, data.data.user);
+                login(data.data.user.email, data.data.token, data.data.user);
                 toast.success(data.message || "Login successful!", {
                     position: "top-right",
                     autoClose: 3000,
@@ -64,113 +64,141 @@ const Login = () => {
     };
 
     return (
-        <div
-            className="min-h-screen flex flex-col bg-cover bg-center"
-            style={{
-                backgroundImage: "url('/assets/bg.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                backgroundColor: "#7ea49d"
-            }}
-        >
-            {/* Header */}
-            <header className="flex justify-between items-center p-6 mt-10">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-tr from-green-400 via-blue-400 to-purple-400 rounded-full flex items-center justify-center font-extrabold text-white shadow-lg border-2 border-white">SE</div>
-                    <span className="text-white font-extrabold text-2xl tracking-wide drop-shadow-lg">ShopEase</span>
-                </div>
-                <div className="text-white text-sm font-medium bg-white/10 px-4 py-2 rounded-full shadow">
-                    Don't have an account?{' '}
-                    <a href="/signup" className="underline hover:text-blue-300 font-semibold">Sign up</a>
-                </div>
-            </header>
+        <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">
+            {/* Animated Background Elements */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-yellow-300/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-300/10 rounded-full blur-2xl animate-bounce"></div>
+            </div>
 
-            {/* Main content */}
-            <main className="flex flex-1 items-center justify-center px-6">
-                <div className="flex max-w-4xl w-full rounded-2xl overflow-hidden shadow-2xl bg-white/80 backdrop-blur-xl border border-gray-200">
-                    {/* Left side - Form */}
-                    <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
-                        <h2 className="text-4xl font-extrabold mb-8 text-gray-900 text-center tracking-tight">Sign in to ShopEase</h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label htmlFor="email" className="block text-gray-700 mb-2 font-semibold">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    placeholder="example@email.com"
-                                    className="w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 bg-white/70 placeholder-gray-400 font-medium shadow"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
+            <div className="relative z-10 min-h-screen flex flex-col">
+                {/* Modern Header */}
+                <header className="flex justify-between items-center p-8 mt-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-gradient-to-tr from-yellow-400 via-pink-400 to-purple-500 rounded-2xl flex items-center justify-center font-black text-white shadow-2xl border border-white/30 backdrop-blur-sm">
+                            SE
+                        </div>
+                        <span className="text-white font-black text-3xl tracking-wide bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
+                            ShopEase
+                        </span>
+                    </div>
+                    <div className="bg-white/20 backdrop-blur-xl border border-white/30 text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-xl hover:bg-white/30 transition-all duration-300">
+                        Don't have an account?{' '}
+                        <a href="/signup" className="text-yellow-200 hover:text-yellow-100 font-bold transition-colors">Sign up</a>
+                    </div>
+                </header>
+
+                {/* Modern Main content */}
+                <main className="flex flex-1 items-center justify-center px-6">
+                    <div className="flex max-w-5xl w-full rounded-3xl overflow-hidden shadow-2xl bg-white/90 backdrop-blur-2xl border border-white/30">
+                        {/* Modern Left side - Form */}
+                        <div className="w-full md:w-1/2 p-12 flex flex-col justify-center">
+                            <div className="text-center mb-10">
+                                <h2 className="text-5xl font-black mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                    Welcome Back
+                                </h2>
+                                <p className="text-slate-600 text-lg font-medium">Sign in to continue your shopping journey</p>
                             </div>
-                            <div className="relative">
-                                <label htmlFor="password" className="block text-gray-700 mb-2 font-semibold">
-                                    Password
-                                </label>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="password"
-                                    placeholder="Enter at least 8+ characters"
-                                    className="w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-400 bg-white/70 placeholder-gray-400 font-medium shadow"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
+                            <form onSubmit={handleSubmit} className="space-y-8">
+                                <div className="space-y-2">
+                                    <label htmlFor="email" className="block text-slate-700 mb-3 font-bold text-sm uppercase tracking-wide">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        placeholder="Enter your email"
+                                        className="w-full p-5 rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 bg-white/80 placeholder-slate-400 font-medium shadow-lg transition-all duration-300 hover:shadow-xl"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="relative space-y-2">
+                                    <label htmlFor="password" className="block text-slate-700 mb-3 font-bold text-sm uppercase tracking-wide">
+                                        Password
+                                    </label>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="password"
+                                        placeholder="Enter your password"
+                                        className="w-full p-5 rounded-2xl border-2 border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-200 bg-white/80 placeholder-slate-400 font-medium shadow-lg transition-all duration-300 hover:shadow-xl"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-5 top-12 text-slate-400 hover:text-purple-600 transition-colors"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        tabIndex={-1}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? <FiEyeOff className="w-6 h-6" /> : <FiEye className="w-6 h-6" />}
+                                    </button>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <label className="flex items-center gap-3 text-slate-600 cursor-pointer">
+                                        <input type="checkbox" className="w-5 h-5 text-indigo-600 border-2 border-slate-300 rounded focus:ring-indigo-500" />
+                                        <span className="font-medium">Remember me</span>
+                                    </label>
+                                    <a href="#" className="text-indigo-600 hover:text-purple-600 font-bold transition-colors">
+                                        Forgot password?
+                                    </a>
+                                </div>
                                 <button
-                                    type="button"
-                                    className="absolute right-4 top-10 text-pink-400 hover:text-pink-600"
-                                    onClick={() => setShowPassword((prev) => !prev)}
-                                    tabIndex={-1}
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                    type="submit"
+                                    className="group relative w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-lg shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300 transform hover:scale-105 overflow-hidden"
                                 >
-                                    {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                                    <span className="relative z-10">Sign In to ShopEase</span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </button>
-                            </div>
-                            <div className="flex items-center justify-between mb-6 text-sm">
-                                <label className="flex items-center gap-2 text-gray-600">
-                                    <input type="checkbox" className="form-checkbox h-4 w-4" /> Remember me
-                                </label>
-                                <a href="#" className="text-blue-600 hover:underline font-semibold">
-                                    Forgot password?
-                                </a>
-                            </div>
-                            <button
-                                type="submit"
-                                className="w-full py-4 rounded-xl bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 text-white font-bold shadow-lg hover:from-green-600 hover:to-purple-600 transition-all duration-300 text-lg"
-                            >
-                                Sign in
-                            </button>
-                        </form>
-                    </div>
+                            </form>
+                        </div>
 
-                    {/* Right side - Illustration */}
-                    <div className="hidden md:flex w-1/2 bg-gradient-to-br from-green-400 via-blue-400 to-purple-400 items-center justify-center relative">
-                        <img
-                            src="/assets/image.png"
-                            alt="Illustration"
-                            className="object-cover w-4/5 h-4/5 rounded-2xl shadow-2xl border-4 border-white"
-                        />
-                    </div>
-                </div>
-            </main>
+                        {/* Modern Right side - Illustration */}
+                        <div className="hidden md:flex w-1/2 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 items-center justify-center relative overflow-hidden">
+                            {/* Floating Elements */}
+                            <div className="absolute inset-0">
+                                <div className="absolute top-10 right-10 w-20 h-20 bg-white/20 rounded-2xl rotate-45 animate-pulse"></div>
+                                <div className="absolute bottom-20 left-10 w-16 h-16 bg-yellow-300/30 rounded-full animate-bounce"></div>
+                                <div className="absolute top-1/2 left-10 w-12 h-12 bg-pink-300/40 rounded-xl rotate-12 animate-pulse delay-500"></div>
+                            </div>
 
-            {/* Toast Container */}
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
+                            <div className="relative z-10 text-center text-white p-8">
+                                <div className="mb-8">
+                                    <img
+                                        src="/assets/image.png"
+                                        alt="Shopping Illustration"
+                                        className="w-80 h-80 object-contain mx-auto rounded-3xl shadow-2xl border-4 border-white/30 backdrop-blur-sm transform hover:scale-105 transition-transform duration-500"
+                                    />
+                                </div>
+                                <h3 className="text-3xl font-black mb-4 bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
+                                    Start Your Shopping Journey
+                                </h3>
+                                <p className="text-lg text-indigo-100 font-medium">
+                                    Discover amazing products, exclusive deals, and premium quality items at unbeatable prices.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                {/* Toast Container */}
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
+            </div>
         </div>
     );
 };

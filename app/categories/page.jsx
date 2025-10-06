@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import API_URL from "../api/api";
-import HeroSection from "./components/HeroSection";
+import Banner from "../../components/shared/Banner";
 import AllCategories from "./components/AllCategories";
 import TrendingCategories from "./components/TrendingCategories";
 import DiscoverProductsCTA from "./components/DiscoverProductsCTA(";
@@ -65,12 +65,19 @@ const CategoriesPage = () => {
     );
 
   return (
-    <>
-      <HeroSection />
-      <AllCategories categories={categories} />
-      <TrendingCategories subCategories={subCategories} />
-      <DiscoverProductsCTA />
-    </>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="-mx-4 md:-mx-6 lg:-mx-8">
+        <Banner
+          title="Explore All Categories"
+          subtitle="Discover products by category and find exactly what you need. Browse through our extensive collection of premium products."
+        />
+      </div>
+      <div className="px-4 md:px-6 lg:px-8 py-8">
+        <AllCategories categories={categories} />
+        <TrendingCategories subCategories={subCategories} />
+        <DiscoverProductsCTA />
+      </div>
+    </div>
   );
 };
 

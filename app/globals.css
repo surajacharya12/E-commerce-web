@@ -120,3 +120,57 @@
     @apply bg-background text-foreground;
   }
 }
+/* Mobile navbar animations */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+/* Mobile search overlay animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Responsive navbar adjustments */
+@media (max-width: 768px) {
+  .navbar-mobile {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .logo-mobile {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-mobile {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .logo-mobile {
+    width: 50px;
+    height: 50px;
+  }
+}
