@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import API_URL from "../api/api";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
+import { displayPrice } from "../utils/currency";
 
 const ApiTest = () => {
     const [status, setStatus] = useState("Testing...");
@@ -93,7 +94,7 @@ const ApiTest = () => {
                                 <div key={product._id} className="border rounded p-4">
                                     <h3 className="font-semibold">{product.name}</h3>
                                     <p className="text-gray-600">{product.description}</p>
-                                    <p className="text-blue-600 font-bold">${product.price}</p>
+                                    <p className="text-blue-600 font-bold">{displayPrice(product.price)}</p>
                                 </div>
                             ))}
                         </div>

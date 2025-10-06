@@ -49,7 +49,7 @@ const WishlistItem = ({ item, onRemove, onAddToCart, onProductClick }) => {
       <h3 className="text-sm font-semibold text-gray-800 truncate mb-1" title={productName}>
         {productName}
       </h3>
-      <p className="text-lg font-bold text-indigo-600 mb-3">${productPrice.toFixed(2)}</p>
+      <p className="text-lg font-bold text-indigo-600 mb-3">Rs. {productPrice.toFixed(2)}</p>
 
       {/* Action Button */}
       <button
@@ -195,7 +195,7 @@ const Wishlist = () => {
           <div className="flex items-center space-x-4 p-3 bg-indigo-50 rounded-xl shadow-inner">
             <span className="font-medium text-gray-700">Estimated Total:</span>
             <span className="text-2xl font-extrabold text-indigo-700">
-              ${estimatedTotal.toFixed(2)}
+              Rs. {estimatedTotal.toFixed(2)}
             </span>
           </div>
         </div>

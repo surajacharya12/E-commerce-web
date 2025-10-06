@@ -7,6 +7,8 @@ import API_URL from "../../api/api";
 import FavoriteButton from "../../../components/FavoriteButton";
 import RatingComponent from "../../../components/RatingComponent";
 import ProductReviews from "../../../components/ProductReviews";
+import ProductChat from "../../../components/ProductChat";
+import ExpandableDescription from "../../../components/ExpandableDescription";
 import { useAuth } from "../../hooks/useAuth";
 
 const ProductDetail = () => {
@@ -371,23 +373,18 @@ const ProductDetail = () => {
                             {/* Price */}
                             <div className="flex items-center space-x-4 mb-6">
                                 <span className="text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                    ${(product.offerPrice || product.price).toFixed(2)}
+                                    Rs. {(product.offerPrice || product.price).toFixed(2)}
                                 </span>
                                 {product.offerPrice && product.price > product.offerPrice && (
                                     <span className="text-xl text-slate-400 line-through">
-                                        ${product.price.toFixed(2)}
+                                        Rs. {product.price.toFixed(2)}
                                     </span>
                                 )}
                             </div>
                         </div>
 
                         {/* Description */}
-                        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                            <h3 className="text-lg font-bold text-slate-800 mb-3">Description</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                {product.description}
-                            </p>
-                        </div>
+                        <ExpandableDescription description={product.description} />
 
                         {/* Quantity and Actions */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
@@ -437,7 +434,7 @@ const ProductDetail = () => {
                                 <FiTruck className="w-6 h-6 text-green-500" />
                                 <div>
                                     <p className="font-semibold text-slate-800">Free Shipping</p>
-                                    <p className="text-sm text-slate-600">On orders over $50</p>
+                                    <p className="text-sm text-slate-600">On orders over Rs. 6,650</p>
                                 </div>
                             </div>
 
@@ -556,11 +553,11 @@ const ProductDetail = () => {
                                         </h3>
                                         <div className="flex items-center justify-between">
                                             <span className="text-xl font-bold text-blue-600">
-                                                ${(relatedProduct.offerPrice || relatedProduct.price).toFixed(2)}
+                                                Rs. {(relatedProduct.offerPrice || relatedProduct.price).toFixed(2)}
                                             </span>
                                             {relatedProduct.offerPrice && relatedProduct.price > relatedProduct.offerPrice && (
                                                 <span className="text-sm text-gray-400 line-through">
-                                                    ${relatedProduct.price.toFixed(2)}
+                                                    Rs. {relatedProduct.price.toFixed(2)}
                                                 </span>
                                             )}
                                         </div>
@@ -646,6 +643,12 @@ const ProductDetail = () => {
                     onClick={() => setShowShareMenu(false)}
                 />
             )}
+
+            {/* Product Chat Component */}
+            <ProductChat
+                productId={product._id}
+                productName={product.name}
+            />
         </div>
     );
 };

@@ -4,6 +4,9 @@ import "./globals.css";
 import Navbar from "./components/navBar";
 import Footer from "./components/Footer";
 import { usePathname } from "next/navigation";
+import { CartProvider } from "./context/CartContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,17 +22,32 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const hideFooter = pathname.startsWith("/signin") || pathname.startsWith("/signup");
-  
+  const hideFooter =
+    pathname.startsWith("/signin") || pathname.startsWith("/signup");
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-white text-black font-sans antialiased`}
-        style={{ backgroundColor: '#fff', color: '#000', minHeight: '100vh' }}
+        style={{ backgroundColor: "#fff", color: "#000", minHeight: "100vh" }}
       >
-        <Navbar />
-        <div className="pt-20">{children}</div>
-        {!hideFooter && <Footer />}
+        <CartProvider>
+          <Navbar />
+          <div className="pt-20">{children}</div>
+          {!hideFooter && <Footer />}
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </CartProvider>
       </body>
     </html>
   );

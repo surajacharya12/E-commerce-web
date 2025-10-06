@@ -4,15 +4,19 @@ import Image from "next/image";
 import { FiShoppingCart, FiStar } from "react-icons/fi";
 import API_URL from "@/app/api/api";
 import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../context/CartContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 // Removed ProductModal - now using unified product detail page
 import FavoriteButton from "../../../components/FavoriteButton";
+import { displayPrice } from "../../utils/currency";
 
 const ExploreProduct = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("");
   const { isLoggedIn } = useAuth();
+  const { addToCart, loading: cartLoading } = useCart();
 
   // Removed selectedProduct state - now using unified product detail page
 
@@ -59,6 +63,24 @@ const ExploreProduct = () => {
       return; // If the click is on the favorite button or any button, stop here
     }
     router.push(`/product/${product._id}`); // Navigate to product detail page
+  };
+
+  // Handle add to cart
+  const handleAddToCart = async (product, e) => {
+    e.stopPropagation();
+    if (!isLoggedIn) {
+      toast.error('Please login to add items to cart');
+      router.push('/signin');
+      return;
+    }
+
+    try {
+      await addToCart(product._id, 1);
+      toast.success(`${product.name} added to cart!`);
+    } catch (error) {
+      toast.error(error.message || 'Failed to add item to cart');
+      console.error('Error adding to cart:', error);
+    }
   };
 
   // Removed handleCloseDetail - now using unified product detail page
@@ -160,24 +182,22 @@ const ExploreProduct = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-bold text-blue-600">
-                      $
-                      {product.offerPrice
-                        ? product.offerPrice.toFixed(2)
-                        : product.price.toFixed(2)}
+                      {displayPrice(product.offerPrice || product.price)}
                     </span>
                     {product.offerPrice &&
                       product.price > product.offerPrice && (
                         <span className="text-lg text-gray-400 line-through">
-                          ${product.price.toFixed(2)}
+                          {displayPrice(product.price)}
                         </span>
                       )}
                   </div>
                   <button
-                    disabled={(product.stock || 0) === 0}
+                    onClick={(e) => handleAddToCart(product, e)}
+                    disabled={(product.stock || 0) === 0 || cartLoading}
                     className="px-4 py-2 rounded-full bg-blue-600 text-white flex items-center gap-2 font-semibold shadow hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
                   >
                     <FiShoppingCart className="w-5 h-5" />
-                    {(product.stock || 0) === 0 ? 'Out of Stock' : 'Add'}
+                    {cartLoading ? 'Adding...' : (product.stock || 0) === 0 ? 'Out of Stock' : 'Add'}
                   </button>
                 </div>
               </div>

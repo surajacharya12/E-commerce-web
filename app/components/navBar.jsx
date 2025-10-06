@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FiSearch, FiBell, FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 import Image from "next/image";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../context/CartContext";
 import API_URL from "../api/api";
 
 const Navbar = () => {
@@ -19,6 +20,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { isLoggedIn, logout } = useAuth();
+  const { cart } = useCart();
 
   // Fetch popular products from backend
   useEffect(() => {
@@ -230,7 +232,7 @@ const Navbar = () => {
                             </div>
                             {suggestion.price && (
                               <div className="text-xs font-semibold text-green-600">
-                                ${suggestion.price}
+                                Rs. {suggestion.price}
                               </div>
                             )}
                           </div>
@@ -319,10 +321,15 @@ const Navbar = () => {
           {/* Icons */}
           <a
             href="/cart"
-            className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center
+            className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center relative
             ${pathname === "/cart" ? "bg-blue-100 ring-2 ring-blue-400" : "hover:bg-blue-100"}`}
           >
             <FiShoppingCart className={`w-5 h-5 md:w-6 md:h-6 ${pathname === "/cart" ? "text-blue-600" : "text-blue-500"}`} />
+            {cart.totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                {cart.totalItems > 99 ? '99+' : cart.totalItems}
+              </span>
+            )}
           </a>
 
           <a

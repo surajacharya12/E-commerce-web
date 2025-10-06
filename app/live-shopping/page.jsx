@@ -284,8 +284,8 @@ const ProductListingContent = () => {
                 className="w-full h-2 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-sm font-medium text-slate-600 mt-3">
-                <span className="px-3 py-1 bg-slate-100 rounded-full">$0</span>
-                <span className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full">${priceRange}</span>
+                <span className="px-3 py-1 bg-slate-100 rounded-full">Rs. 0</span>
+                <span className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full">Rs. {priceRange}</span>
               </div>
             </div>
           </div>

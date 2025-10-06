@@ -5,6 +5,7 @@ import { useFavorites } from "../hooks/useFavorites";
 import FavoriteButton from "../../components/FavoriteButton";
 import API_URL from "../api/api";
 import axios from "axios";
+import { displayPrice } from "../utils/currency";
 
 const TestFavorites = () => {
     const { isLoggedIn, userData } = useAuth();
@@ -98,7 +99,7 @@ const TestFavorites = () => {
                                 </p>
                                 <div className="flex items-center justify-between">
                                     <span className="text-xl font-bold text-blue-600">
-                                        ${product.offerPrice || product.price}
+                                        {displayPrice(product.offerPrice || product.price)}
                                     </span>
                                     <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                                         Add to Cart

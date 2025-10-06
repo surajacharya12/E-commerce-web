@@ -133,7 +133,7 @@ const Banner = ({
                                             </svg>
                                         ))}
                                     </div>
-                                    <span className="text-white font-bold text-lg">$330</span>
+                                    <span className="text-white font-bold text-lg">Rs. 43,890</span>
                                 </div>
                             </div>
                         </div>
