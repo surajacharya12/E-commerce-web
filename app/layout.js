@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { CartProvider } from "./context/CartContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OrderSlipAccess from "./components/OrderSlipAccess";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }) {
           <Navbar />
           <div className="pt-20">{children}</div>
           {!hideFooter && <Footer />}
+          <OrderSlipAccess />
           <ToastContainer
             position="top-right"
             autoClose={3000}

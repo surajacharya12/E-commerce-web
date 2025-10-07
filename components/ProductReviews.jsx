@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FiStar, FiThumbsUp, FiUser, FiCalendar, FiShield, FiEdit2, FiSave, FiX } from "react-icons/fi";
 import API_URL from "../app/api/api";
 import { useAuth } from "../app/hooks/useAuth";
+import { toast } from "react-toastify";
 
 const ProductReviews = ({ productId, onRatingUpdate }) => {
     const [reviews, setReviews] = useState([]);
@@ -178,11 +179,11 @@ const ProductReviews = ({ productId, onRatingUpdate }) => {
                     onRatingUpdate();
                 }
             } else {
-                alert(result.message || "Failed to update review");
+                toast.error(result.message || "Failed to update review");
             }
         } catch (error) {
             console.error("Error updating review:", error);
-            alert("An error occurred while updating the review");
+            toast.error("An error occurred while updating the review");
         }
     };
 

@@ -98,14 +98,27 @@ const ProductDetail = () => {
         }
     };
 
-    const handleBuyNow = () => {
+    const handleBuyNow = async () => {
         if (!isLoggedIn) {
-            alert("Please log in to purchase");
+            toast.error("Please log in to purchase");
             return;
         }
-        // Buy now logic here
-        console.log(`Buy now: ${quantity} of ${product.name}`);
-        alert(`Proceeding to checkout with ${quantity} ${product.name}`);
+
+        if ((product.stock || 0) === 0) {
+            toast.error("This product is out of stock");
+            return;
+        }
+
+        try {
+            // Add product to cart first
+            await addToCart(product._id, quantity);
+            toast.success(`Added ${quantity} ${product.name} to cart!`);
+
+            // Navigate to checkout page
+            router.push('/checkout');
+        } catch (error) {
+            toast.error(error.message || 'Failed to add item to cart');
+        }
     };
 
     const handleShare = async (platform) => {

@@ -320,8 +320,14 @@ const Navbar = () => {
           </button>
 
           {/* Icons */}
-          <a
-            href="/cart"
+          <button
+            onClick={() => {
+              if (!isLoggedIn) {
+                router.push('/signin');
+              } else {
+                router.push('/cart');
+              }
+            }}
             className={`p-2 rounded-full transition-colors shadow-sm flex items-center justify-center relative
             ${pathname === "/cart" ? "bg-blue-100 ring-2 ring-blue-400" : "hover:bg-blue-100"}`}
           >
@@ -331,7 +337,7 @@ const Navbar = () => {
                 {cart.totalItems > 99 ? '99+' : cart.totalItems}
               </span>
             )}
-          </a>
+          </button>
 
           <a
             href="/reminder"

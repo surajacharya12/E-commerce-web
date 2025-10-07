@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { FiStar } from "react-icons/fi";
 import API_URL from "../app/api/api";
+import { toast } from "react-toastify";
 
 const RatingComponent = ({ productId, userId, onRatingUpdate }) => {
     const [rating, setRating] = useState(0);
@@ -36,12 +37,12 @@ const RatingComponent = ({ productId, userId, onRatingUpdate }) => {
 
     const handleSubmitRating = async () => {
         if (!userId) {
-            alert("Please log in to rate this product");
+            toast.error("Please log in to rate this product");
             return;
         }
 
         if (rating === 0) {
-            alert("Please select a rating");
+            toast.error("Please select a rating");
             return;
         }
 
@@ -65,15 +66,15 @@ const RatingComponent = ({ productId, userId, onRatingUpdate }) => {
 
             if (result.success) {
                 setUserRating(result.data);
-                alert(userRating ? "Rating updated successfully!" : "Rating submitted successfully!");
+                toast.success(userRating ? "Rating updated successfully!" : "Rating submitted successfully!");
                 if (onRatingUpdate) {
                     onRatingUpdate();
                 }
             } else {
-                alert(result.message || "Failed to submit rating");
+                toast.error(result.message || "Failed to submit rating");
             }
         } catch (error) {
-            alert("An error occurred while submitting rating");
+            toast.error("An error occurred while submitting rating");
         } finally {
             setIsSubmitting(false);
         }
@@ -162,8 +163,8 @@ const RatingComponent = ({ productId, userId, onRatingUpdate }) => {
                                         <FiStar
                                             key={star}
                                             className={`w-4 h-4 ${star <= userRating.rating
-                                                    ? "text-yellow-400 fill-current"
-                                                    : "text-slate-300"
+                                                ? "text-yellow-400 fill-current"
+                                                : "text-slate-300"
                                                 }`}
                                         />
                                     ))}

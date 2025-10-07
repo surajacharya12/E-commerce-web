@@ -6,6 +6,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import API_URL from "../api/api";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ const Login = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:3001/users/login", {
+            const response = await fetch(`${API_URL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

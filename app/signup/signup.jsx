@@ -6,6 +6,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import API_URL from "../api/api";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -44,7 +45,7 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/users/register", {
+      const response = await fetch(`${API_URL}/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

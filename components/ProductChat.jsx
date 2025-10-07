@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FiMessageCircle, FiSend, FiX, FiUser, FiClock, FiCheck, FiCheckCheck } from 'react-icons/fi';
 import { useAuth } from '../app/hooks/useAuth';
 import API_URL from '../app/api/api';
+import { toast } from 'react-toastify';
 
 const ProductChat = ({ productId, productName }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -87,12 +88,12 @@ const ProductChat = ({ productId, productName }) => {
             } else {
                 console.error('Failed to send message:', result.message);
                 setNewMessage(messageText); // Restore message on error
-                alert('Failed to send message. Please try again.');
+                toast.error('Failed to send message. Please try again.');
             }
         } catch (error) {
             console.error('Error sending message:', error);
             setNewMessage(messageText); // Restore message on error
-            alert('Network error. Please check your connection and try again.');
+            toast.error('Network error. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }

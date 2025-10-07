@@ -2,6 +2,7 @@
 import { FiHeart } from "react-icons/fi";
 import { useFavorites } from "../app/hooks/useFavorites";
 import { useAuth } from "../app/hooks/useAuth";
+import { toast } from "react-toastify";
 
 const FavoriteButton = ({ productId, className = "" }) => {
     const { isLoggedIn, userData, loading } = useAuth();
@@ -29,7 +30,7 @@ const FavoriteButton = ({ productId, className = "" }) => {
 
         // Use the same authentication check as useFavorites hook
         if (!isLoggedIn || !userId) {
-            alert(`Please log in to add items to your wishlist. Debug: isLoggedIn=${isLoggedIn}, userData=${!!userData}, userId=${userId}`);
+            toast.error("Please log in to add items to your wishlist");
             return;
         }
         toggleFavorite(productId);
