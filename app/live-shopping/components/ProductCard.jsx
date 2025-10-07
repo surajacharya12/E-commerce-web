@@ -3,7 +3,8 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FavoriteButton from "../../../components/FavoriteButton";
-import { FiShoppingCart, FiStar } from "react-icons/fi";
+import AddToCartButton from "../../../components/AddToCartButton";
+import { FiStar } from "react-icons/fi";
 
 const ProductCard = ({ product }) => {
   const router = useRouter();
@@ -14,12 +15,6 @@ const ProductCard = ({ product }) => {
       return;
     }
     router.push(`/product/${product._id}`);
-  };
-
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    // Add to cart logic here
-    console.log('Added to cart:', product.name);
   };
 
   return (
@@ -92,14 +87,11 @@ const ProductCard = ({ product }) => {
               </span>
             )}
           </div>
-          <button
-            onClick={handleAddToCart}
-            disabled={(product.stock || 0) === 0}
-            className="px-4 py-2 rounded-full bg-blue-600 text-white flex items-center gap-2 font-semibold shadow hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
-          >
-            <FiShoppingCart className="w-5 h-5" />
-            {(product.stock || 0) === 0 ? 'Out of Stock' : 'Add'}
-          </button>
+          <AddToCartButton
+            product={product}
+            size="medium"
+            variant="primary"
+          />
         </div>
       </div>
     </div>

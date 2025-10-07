@@ -10,11 +10,14 @@ import ProductReviews from "../../../components/ProductReviews";
 import ProductChat from "../../../components/ProductChat";
 import ExpandableDescription from "../../../components/ExpandableDescription";
 import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../context/CartContext";
+import { toast } from "react-toastify";
 
 const ProductDetail = () => {
     const params = useParams();
     const router = useRouter();
     const { isLoggedIn } = useAuth();
+    const { addToCart, isInCart, getItemQuantity } = useCart();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,6 +26,7 @@ const ProductDetail = () => {
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [isZoomed, setIsZoomed] = useState(false);
     const [showShareMenu, setShowShareMenu] = useState(false);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
 
     // Get user ID from auth system
     const { userData } = useAuth();
@@ -72,14 +76,26 @@ const ProductDetail = () => {
         }
     }, [params.id]);
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (!isLoggedIn) {
-            alert("Please log in to add items to cart");
+            toast.error("Please log in to add items to cart");
             return;
         }
-        // Add to cart logic here
-        console.log(`Added ${quantity} of ${product.name} to cart`);
-        alert(`Added ${quantity} ${product.name} to cart!`);
+
+        if ((product.stock || 0) === 0) {
+            toast.error("This product is out of stock");
+            return;
+        }
+
+        try {
+            setIsAddingToCart(true);
+            await addToCart(product._id, quantity);
+            toast.success(`Added ${quantity} ${product.name} to cart!`);
+        } catch (error) {
+            toast.error(error.message || 'Failed to add item to cart');
+        } finally {
+            setIsAddingToCart(false);
+        }
     };
 
     const handleBuyNow = () => {
@@ -411,11 +427,25 @@ const ProductDetail = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <button
                                     onClick={handleAddToCart}
-                                    disabled={(product.stock || 0) === 0}
-                                    className="flex items-center justify-center space-x-2 px-6 py-4 bg-white border-2 border-indigo-500 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-50 disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
+                                    disabled={(product.stock || 0) === 0 || isAddingToCart}
+                                    className="flex items-center justify-center space-x-2 px-6 py-4 bg-white border-2 border-indigo-500 text-indigo-600 hover:bg-indigo-50 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:hover:scale-100"
                                 >
-                                    <FiShoppingCart className="w-5 h-5" />
-                                    <span>{(product.stock || 0) === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+                                    {isAddingToCart ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                                            <span>Adding...</span>
+                                        </>
+                                    ) : (product.stock || 0) === 0 ? (
+                                        <>
+                                            <FiShoppingCart className="w-5 h-5" />
+                                            <span>Out of Stock</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FiShoppingCart className="w-5 h-5" />
+                                            <span>Add</span>
+                                        </>
+                                    )}
                                 </button>
 
                                 <button

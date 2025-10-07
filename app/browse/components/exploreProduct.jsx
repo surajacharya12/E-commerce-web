@@ -1,22 +1,20 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FiShoppingCart, FiStar } from "react-icons/fi";
+import { FiStar } from "react-icons/fi";
 import API_URL from "@/app/api/api";
-import { useAuth } from "../../hooks/useAuth";
-import { useCart } from "../../context/CartContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 // Removed ProductModal - now using unified product detail page
 import FavoriteButton from "../../../components/FavoriteButton";
+import AddToCartButton from "../../../components/AddToCartButton";
 import { displayPrice } from "../../utils/currency";
 
 const ExploreProduct = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("");
-  const { isLoggedIn } = useAuth();
-  const { addToCart, loading: cartLoading } = useCart();
+
 
   // Removed selectedProduct state - now using unified product detail page
 
@@ -65,23 +63,7 @@ const ExploreProduct = () => {
     router.push(`/product/${product._id}`); // Navigate to product detail page
   };
 
-  // Handle add to cart
-  const handleAddToCart = async (product, e) => {
-    e.stopPropagation();
-    if (!isLoggedIn) {
-      toast.error('Please login to add items to cart');
-      router.push('/signin');
-      return;
-    }
 
-    try {
-      await addToCart(product._id, 1);
-      toast.success(`${product.name} added to cart!`);
-    } catch (error) {
-      toast.error(error.message || 'Failed to add item to cart');
-      console.error('Error adding to cart:', error);
-    }
-  };
 
   // Removed handleCloseDetail - now using unified product detail page
 
@@ -191,14 +173,11 @@ const ExploreProduct = () => {
                         </span>
                       )}
                   </div>
-                  <button
-                    onClick={(e) => handleAddToCart(product, e)}
-                    disabled={(product.stock || 0) === 0 || cartLoading}
-                    className="px-4 py-2 rounded-full bg-blue-600 text-white flex items-center gap-2 font-semibold shadow hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
-                  >
-                    <FiShoppingCart className="w-5 h-5" />
-                    {cartLoading ? 'Adding...' : (product.stock || 0) === 0 ? 'Out of Stock' : 'Add'}
-                  </button>
+                  <AddToCartButton
+                    product={product}
+                    size="medium"
+                    variant="primary"
+                  />
                 </div>
               </div>
             </div>

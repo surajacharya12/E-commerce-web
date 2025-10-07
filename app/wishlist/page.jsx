@@ -4,9 +4,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import API_URL from '../api/api';
 import { useAuth } from '../hooks/useAuth';
+import AddToCartButton from '../../components/AddToCartButton';
 
 
-const WishlistItem = ({ item, onRemove, onAddToCart, onProductClick }) => {
+const WishlistItem = ({ item, onRemove, onProductClick }) => {
   // Safety check for productId
   if (!item.productId) {
     return null;
@@ -14,14 +15,18 @@ const WishlistItem = ({ item, onRemove, onAddToCart, onProductClick }) => {
 
   const product = item.productId;
   const productName = product.name || 'Unknown Product';
-  const productPrice = product.price || 0;
+  const productPrice = product.offerPrice || product.price || 0;
+  const originalPrice = product.price || 0;
   const productId = product._id;
+  const hasDiscount = product.offerPrice && product.price > product.offerPrice;
 
   return (
     <div
-      className="relative group bg-white/70 backdrop-blur-md rounded-xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border border-indigo-100/50 cursor-pointer"
+      className="relative group bg-white/90 backdrop-blur-xl rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 ease-out transform hover:-translate-y-2 hover:scale-[1.02] border border-white/20 cursor-pointer overflow-hidden"
       onClick={() => onProductClick(productId)}
     >
+      {/* Gradient overlay for modern effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/30 via-transparent to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
       {/* Remove Button */}
       <button
@@ -29,41 +34,69 @@ const WishlistItem = ({ item, onRemove, onAddToCart, onProductClick }) => {
           e.stopPropagation();
           onRemove(productId);
         }}
-        className="absolute top-2 right-2 p-1 bg-white rounded-full text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition-colors opacity-0 group-hover:opacity-100 z-10 shadow-md"
+        className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20 shadow-lg hover:scale-110"
         aria-label={`Remove ${productName} from wishlist`}
         type="button"
       >
         <X className="w-4 h-4" />
       </button>
 
+      {/* Discount Badge */}
+      {hasDiscount && (
+        <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
+          {Math.round(((originalPrice - productPrice) / originalPrice) * 100)}% OFF
+        </div>
+      )}
+
       {/* Image */}
-      <div className="aspect-square w-full bg-gray-200 rounded-lg overflow-hidden mb-3">
+      <div className="aspect-square w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden mb-4 relative">
         <img
           src={product.images?.[0]?.url || product.imageUrl || "/assets/product-placeholder.png"}
           alt={productName}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
+        {/* Image overlay for better text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
 
       {/* Details */}
-      <h3 className="text-sm font-semibold text-gray-800 truncate mb-1" title={productName}>
-        {productName}
-      </h3>
-      <p className="text-lg font-bold text-indigo-600 mb-3">Rs. {productPrice.toFixed(2)}</p>
+      <div className="relative z-10 space-y-3">
+        <h3 className="text-sm font-bold text-gray-800 truncate group-hover:text-indigo-600 transition-colors duration-300" title={productName}>
+          {productName}
+        </h3>
 
-      {/* Action Button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onAddToCart(product);
-        }}
-        className="w-full flex items-center justify-center space-x-2 py-2 text-sm rounded-lg text-white font-medium bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-indigo-500/30"
-        aria-label={`Add ${productName} to cart`}
-        type="button"
-      >
-        <ShoppingCart className="w-4 h-4" />
-        <span>Add to Cart</span>
-      </button>
+        {/* Price Section */}
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <p className="text-lg font-black text-indigo-600">
+              Rs. {productPrice.toFixed(2)}
+            </p>
+            {hasDiscount && (
+              <p className="text-xs text-gray-400 line-through">
+                Rs. {originalPrice.toFixed(2)}
+              </p>
+            )}
+          </div>
+          {/* Stock indicator */}
+          <div className="flex items-center space-x-1">
+            <div className={`w-2 h-2 rounded-full ${(product.stock || 0) > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className="text-xs text-gray-500">
+              {(product.stock || 0) > 0 ? 'In Stock' : 'Out of Stock'}
+            </span>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <AddToCartButton
+          product={product}
+          size="xs"
+          variant="primary"
+          className="w-full mt-4"
+        />
+      </div>
+
+      {/* Modern shine effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
     </div>
   );
 };
@@ -153,10 +186,7 @@ const Wishlist = () => {
     }
   };
 
-  const handleAddToCart = (item) => {
-    console.log(`Adding ${item.name} (ID: ${item._id}) to cart. Implement actual cart logic here.`);
-    alert(`Added "${item.name}" to cart (simulated).`);
-  };
+
 
   const estimatedTotal = useMemo(() => {
     return wishlistItems.reduce((sum, item) => {
@@ -242,13 +272,12 @@ const Wishlist = () => {
             </button>
           </div>
         ) : (
-          <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {wishlistItems.map((item) => (
               <WishlistItem
                 key={item._id}
                 item={item}
                 onRemove={handleRemoveFromWishlist}
-                onAddToCart={handleAddToCart}
                 onProductClick={handleProductClick}
               />
             ))}

@@ -81,7 +81,7 @@ const CartPage = () => {
                         <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Cart is Empty</h2>
                         <p className="text-gray-600 mb-8">Looks like you haven't added anything to your cart yet</p>
                         <button
-                            onClick={() => router.push('/browse')}
+                            onClick={() => router.push('/live-shopping')}
                             className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
                         >
                             <FiArrowLeft className="w-5 h-5" />
@@ -271,7 +271,7 @@ const CartPage = () => {
                             </button>
 
                             <button
-                                onClick={() => router.push('/browse')}
+                                onClick={() => router.push('/live-shopping')}
                                 className="w-full mt-4 border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
                             >
                                 Continue Shopping
