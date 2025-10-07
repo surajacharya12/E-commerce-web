@@ -12,6 +12,7 @@ import {
     FiCheck,
     FiAlertCircle
 } from "react-icons/fi";
+import ContactBanner from "../../components/ContactBanner";
 
 export default function Shipping() {
     const shippingOptions = [
@@ -310,6 +311,15 @@ export default function Shipping() {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                {/* Contact Banner */}
+                <div className="mt-8">
+                    <ContactBanner
+                        message="Questions about shipping?"
+                        showHours={true}
+                        className="shadow-xl"
+                    />
                 </div>
             </div>
         </div>

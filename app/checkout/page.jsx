@@ -7,6 +7,7 @@ import CashOnDelivery from "./components/CashOnDelivery";
 import OnlinePayment from "./components/OnlinePayment";
 import { toast } from "react-toastify";
 import API_URL from "../api/api";
+import ContactBanner from "../../components/ContactBanner";
 
 const PAYMENT_METHODS = {
     COD: "cashOnDelivery",

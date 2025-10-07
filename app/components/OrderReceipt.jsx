@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { FiDownload, FiPrinter, FiCheck, FiPackage, FiTruck, FiHome } from "react-icons/fi";
+import { contactInfo } from "@/lib/info";
 
 const OrderReceipt = ({ order, onClose, onDownload, onPrint }) => {
     if (!order) return null;
@@ -166,7 +167,7 @@ const OrderReceipt = ({ order, onClose, onDownload, onPrint }) => {
                     {/* Footer */}
                     <div className="text-center text-gray-500 text-sm border-t pt-6">
                         <p className="mb-2">Thank you for shopping with ShopEase!</p>
-                        <p>For any queries, contact us at support@shopease.com</p>
+                        <p>For any queries, contact us at {contactInfo.email.display}</p>
                     </div>
                 </div>
 

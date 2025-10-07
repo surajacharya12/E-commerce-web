@@ -11,6 +11,7 @@ import {
     FiCalendar,
     FiRefreshCw
 } from "react-icons/fi";
+import ContactBanner from "../../components/ContactBanner";
 
 export default function Payment() {
     const paymentMethods = [
@@ -226,20 +227,13 @@ export default function Payment() {
                     </div>
                 </div>
 
-                {/* Contact Support */}
-                <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-4 md:p-6 border border-indigo-100">
-                    <div className="text-center">
-                        <FiRefreshCw className="w-8 h-8 md:w-10 md:h-10 text-indigo-600 mx-auto mb-3 md:mb-4" />
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
-                            Need Help with Payment?
-                        </h3>
-                        <p className="text-gray-600 text-sm md:text-base mb-4 md:mb-6">
-                            If you're experiencing payment issues or have questions about billing, our support team is here to help.
-                        </p>
-                        <button className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                            Contact Payment Support
-                        </button>
-                    </div>
+                {/* Contact Banner */}
+                <div className="mt-8">
+                    <ContactBanner
+                        message="Need help with payment?"
+                        showHours={true}
+                        className="shadow-xl"
+                    />
                 </div>
             </div>
         </div>

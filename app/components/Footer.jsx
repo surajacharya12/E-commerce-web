@@ -2,6 +2,8 @@
 
 import { FiTwitter, FiFacebook, FiLinkedin, FiYoutube } from "react-icons/fi";
 import Image from "next/image";
+import ContactInfo from "../../components/ContactInfo";
+import { contactInfo } from '@/lib/info';
 
 const Footer = () => (
   <footer className="w-full bg-gray-50 border-t border-gray-300 py-8 mt-16 shadow-inner">
@@ -23,7 +25,26 @@ const Footer = () => (
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-gray-700">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 mb-8 text-gray-700">
+        {/* Contact Information */}
+        <div>
+          <h3 className="font-semibold text-lg mb-5 border-b border-blue-500 pb-2">
+            Contact Us
+          </h3>
+          <ContactInfo
+            showPhone={true}
+            showEmail={true}
+            showAddress={false}
+            showHours={false}
+            className="space-y-3 text-sm"
+          />
+          <div className="mt-4 text-sm text-gray-600">
+            <p className="font-medium">Business Hours:</p>
+            <p>{contactInfo.businessHours.weekdays}</p>
+            <p>Sat: {contactInfo.businessHours.saturday}</p>
+          </div>
+        </div>
+
         {/* Customer Service */}
         <div>
           <h3 className="font-semibold text-lg mb-5 border-b border-blue-500 pb-2">

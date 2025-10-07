@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
 import API_URL from "../api/api";
 import OrderCancellation from "../components/OrderCancellation";
+import ContactBanner from "../../components/ContactBanner";
 
 export default function OrdersPage() {
     const [orders, setOrders] = useState([]);
@@ -217,6 +218,15 @@ export default function OrdersPage() {
                         ))}
                     </div>
                 )}
+            </div>
+
+            {/* Contact Banner */}
+            <div className="max-w-6xl mx-auto px-4 mt-8">
+                <ContactBanner
+                    variant="minimal"
+                    message="Need help with your orders?"
+                    className="shadow-lg"
+                />
             </div>
 
             {/* Order Cancellation Modal */}

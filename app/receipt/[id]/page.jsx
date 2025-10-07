@@ -5,7 +5,9 @@ import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
 import API_URL from "../../api/api";
 import { toast } from "react-toastify";
-import { FiDownload, FiPrinter, FiCheck, FiPackage, FiTruck, FiHome, FiArrowLeft } from "react-icons/fi";
+import { FiDownload, FiPrinter, FiCheck, FiPackage, FiTruck, FiHome, FiArrowLeft, FiShoppingBag } from "react-icons/fi";
+import ContactBanner from "../../../components/ContactBanner";
+import { contactInfo } from '@/lib/info';
 
 export default function ReceiptPage() {
     const [order, setOrder] = useState(null);
@@ -43,11 +45,129 @@ export default function ReceiptPage() {
     };
 
     const handleDownload = () => {
-        window.print();
+        generateThermalReceipt();
     };
 
     const handlePrint = () => {
-        window.print();
+        generateThermalReceipt();
+    };
+
+    const generateThermalReceipt = () => {
+        const thermalContent = `
+            <html>
+            <head>
+                <title>Receipt - ${order.orderNumber || order._id?.slice(-8).toUpperCase()}</title>
+                <style>
+                    @page {
+                        size: 80mm auto;
+                        margin: 0;
+                    }
+                    body {
+                        font-family: 'Courier New', monospace;
+                        font-size: 12px;
+                        line-height: 1.2;
+                        margin: 0;
+                        padding: 8px;
+                        width: 80mm;
+                        background: white;
+                    }
+                    .center { text-align: center; }
+                    .bold { font-weight: bold; }
+                    .line { border-bottom: 1px dashed #000; margin: 4px 0; }
+                    .small { font-size: 10px; }
+                    .item-row { display: flex; justify-content: space-between; margin: 2px 0; }
+                    .total-row { border-top: 1px solid #000; padding-top: 4px; margin-top: 4px; }
+                </style>
+            </head>
+            <body>
+                <div class="center bold">SHOPEASE</div>
+                <div class="center small">Receipt</div>
+                <div class="line"></div>
+                
+                <div>Receipt #: ${order.orderNumber || order._id?.slice(-8).toUpperCase()}</div>
+                <div>Date: ${new Date(order.orderDate).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })}</div>
+                <div>Status: ${order.orderStatus.toUpperCase()}</div>
+                <div class="line"></div>
+                
+                <div class="bold">CUSTOMER:</div>
+                <div>${order.userID?.name || 'N/A'}</div>
+                <div class="small">${order.userID?.email || 'N/A'}</div>
+                ${order.shippingAddress?.phone && order.shippingAddress.phone !== 'N/A' ?
+                `<div class="small">Ph: ${order.shippingAddress.phone}</div>` : ''}
+                <div class="line"></div>
+                
+                ${order.deliveryMethod === 'storeDelivery' ? `
+                <div class="bold">PICKUP FROM:</div>
+                <div class="small">${order.selectedStore?.storeName || 'ShopEase Store - Main Branch'}</div>
+                <div class="small">${order.selectedStore?.storeLocation || '123 Commerce Street'}</div>
+                <div class="small">${order.selectedStore?.storeLocation ? '' : 'Kathmandu, '}Nepal</div>
+                <div class="small">Ready in 2-3 days</div>
+                ` : `
+                <div class="bold">DELIVERED TO:</div>
+                <div class="small">${order.shippingAddress?.street || 'N/A'}</div>
+                <div class="small">${order.shippingAddress?.city || 'N/A'}, ${order.shippingAddress?.state || 'N/A'}</div>
+                <div class="small">${order.shippingAddress?.postalCode || 'N/A'}, ${order.shippingAddress?.country || 'N/A'}</div>
+                `}
+                <div class="line"></div>
+                
+                <div class="bold">ITEMS PURCHASED:</div>
+                ${order.items?.map(item => `
+                <div class="item-row">
+                    <div>${item.productName}</div>
+                </div>
+                <div class="item-row small">
+                    <div>Qty: ${item.quantity} x ₹${item.price}</div>
+                    <div>₹${(item.price * item.quantity).toFixed(2)}</div>
+                </div>
+                `).join('')}
+                <div class="line"></div>
+                
+                <div class="item-row">
+                    <div>Subtotal:</div>
+                    <div>₹${order.orderTotal?.subtotal || order.totalPrice}</div>
+                </div>
+                <div class="item-row">
+                    <div>${order.deliveryMethod === 'storeDelivery' ? 'Pickup Fee:' : 'Delivery Fee:'}</div>
+                    <div>₹${order.orderTotal?.deliveryFee || (order.deliveryMethod === 'homeDelivery' ? '150' : order.deliveryMethod === 'storeDelivery' ? '100' : '50')}</div>
+                </div>
+                <div class="item-row">
+                    <div>Tax (10%):</div>
+                    <div>₹${order.orderTotal?.tax || Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</div>
+                </div>
+                ${order.orderTotal?.discount > 0 ? `
+                <div class="item-row">
+                    <div>Discount:</div>
+                    <div>-₹${order.orderTotal.discount}</div>
+                </div>
+                ` : ''}
+                <div class="item-row bold total-row">
+                    <div>TOTAL PAID:</div>
+                    <div>₹${order.totalPrice}</div>
+                </div>
+                <div class="line"></div>
+                
+                <div class="small">Payment: ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}</div>
+                <div class="small">Method: ${order.deliveryMethod === 'homeDelivery' ? 'Home Delivery' : order.deliveryMethod === 'storeDelivery' ? 'Store Pickup' : 'Standard Delivery'}</div>
+                <div class="line"></div>
+                
+                <div class="center small">THANK YOU FOR YOUR PURCHASE!</div>
+                <div class="center small">${contactInfo.email.display}</div>
+                <div class="center small">${contactInfo.phone.display}</div>
+                <div class="center small">Keep this receipt for your records</div>
+            </body>
+            </html>
+        `;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(thermalContent);
+        printWindow.document.close();
+        printWindow.print();
     };
 
     const getStatusIcon = (status) => {
@@ -101,8 +221,8 @@ export default function ReceiptPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-8 mt-10">
             <div className="max-w-4xl mx-auto px-4">
-                {/* Header - Hidden in print */}
-                <div className="flex items-center gap-4 mb-8 print:hidden">
+                {/* Header */}
+                <div className="flex items-center gap-4 mb-8">
                     <button
                         onClick={() => router.push("/orders")}
                         className="p-2 hover:bg-white/50 rounded-xl transition-colors"
@@ -197,14 +317,16 @@ export default function ReceiptPage() {
                                         {order.deliveryMethod === 'storeDelivery' ? 'Pickup Fee:' : 'Delivery Fee:'}
                                     </span>
                                     <span className="font-semibold">
-                                        {order.deliveryMethod === 'homeDelivery' ? '₹150' :
-                                            order.deliveryMethod === 'storeDelivery' ? '₹100' :
-                                                (order.orderTotal?.subtotal || order.totalPrice) > 500 ? 'Free' : '₹50'}
+                                        {order.orderTotal?.deliveryFee !== undefined ?
+                                            `₹${order.orderTotal.deliveryFee}` :
+                                            order.deliveryMethod === 'homeDelivery' ? '₹150' :
+                                                order.deliveryMethod === 'storeDelivery' ? '₹100' :
+                                                    (order.orderTotal?.subtotal || order.totalPrice) > 500 ? 'Free' : '₹50'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Tax (10%):</span>
-                                    <span className="font-semibold">₹{Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</span>
+                                    <span className="font-semibold">₹{order.orderTotal?.tax !== undefined ? order.orderTotal.tax : Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Discount:</span>
@@ -306,17 +428,29 @@ export default function ReceiptPage() {
                             )}
                         </div>
 
+                        {/* Customer Info */}
+                        <div className="mb-8 bg-yellow-50 rounded-xl p-6">
+                            <h4 className="font-bold text-gray-800 mb-3 text-lg">Customer Information</h4>
+                            <div className="text-gray-600 text-lg space-y-1">
+                                <p>Name: {order.userID?.name || 'N/A'}</p>
+                                <p>Email: {order.userID?.email || 'N/A'}</p>
+                                {order.shippingAddress?.phone && order.shippingAddress.phone !== 'N/A' && (
+                                    <p>Phone: {order.shippingAddress.phone}</p>
+                                )}
+                            </div>
+                        </div>
+
                         {/* Footer */}
                         <div className="text-center text-gray-500 border-t pt-6">
                             <p className="mb-2 text-lg">Thank you for shopping with ShopEase!</p>
-                            <p>For any queries, contact us at support@shopease.com | +91-1234567890</p>
+                            <p>For any queries, contact us at <a href={contactInfo.email.link} className="text-indigo-600 hover:underline">{contactInfo.email.display}</a> | <a href={contactInfo.phone.link} className="text-indigo-600 hover:underline">{contactInfo.phone.display}</a></p>
                             <p className="mt-4 text-sm">This is a computer-generated receipt and does not require a signature.</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Action Buttons - Hidden in print */}
-                <div className="flex gap-4 mt-8 print:hidden">
+                {/* Action Buttons */}
+                <div className="flex gap-4 mt-8">
                     <button
                         onClick={handleDownload}
                         className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-colors text-lg"
@@ -332,15 +466,16 @@ export default function ReceiptPage() {
                         Print Receipt
                     </button>
                 </div>
-            </div>
 
-            <style jsx global>{`
-                @media print {
-                    body { margin: 0; }
-                    .print\\:hidden { display: none !important; }
-                    .print\\:bg-gray-800 { background-color: #1f2937 !important; }
-                }
-            `}</style>
+                {/* Contact Banner */}
+                <div className="mt-8">
+                    <ContactBanner
+                        variant="minimal"
+                        message="Need help with your receipt?"
+                        className="shadow-lg"
+                    />
+                </div>
+            </div>
         </div>
     );
 }

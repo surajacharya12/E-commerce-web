@@ -8,6 +8,7 @@ import { CartProvider } from "./context/CartContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderSlipAccess from "./components/OrderSlipAccess";
+import FloatingContact from "../components/FloatingContact";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
           <div className="pt-20">{children}</div>
           {!hideFooter && <Footer />}
           <OrderSlipAccess />
+          {pathname && pathname.startsWith('/browse') && <FloatingContact />}
           <ToastContainer
             position="top-right"
             autoClose={3000}

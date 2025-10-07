@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
+import { contactInfo as siteContact } from '@/lib/info';
 import {
     FiMail,
     FiUser,
@@ -115,7 +116,7 @@ export const ContactUs = () => {
         {
             icon: <FiMail className="w-5 h-5" />,
             title: "Email Us",
-            value: "support@shopease.com",
+            value: siteContact.email.display || siteContact.email.link,
             description: "Get in touch via email",
             color: "text-blue-600",
             bgColor: "bg-blue-50"
@@ -123,7 +124,7 @@ export const ContactUs = () => {
         {
             icon: <FiPhone className="w-5 h-5" />,
             title: "Call Us",
-            value: "+1 (555) 123-4567",
+            value: siteContact.phone.display || siteContact.phone.link,
             description: "Mon-Fri, 9AM-6PM EST",
             color: "text-green-600",
             bgColor: "bg-green-50"
@@ -131,7 +132,7 @@ export const ContactUs = () => {
         {
             icon: <FiMapPin className="w-5 h-5" />,
             title: "Visit Us",
-            value: "123 Commerce St",
+            value: siteContact.address?.full || '123 Commerce St',
             description: "New York, NY 10001",
             color: "text-purple-600",
             bgColor: "bg-purple-50"

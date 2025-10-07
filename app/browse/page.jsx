@@ -4,6 +4,7 @@ import ExploreProduct from "./components/exploreProduct";
 import { useAuth } from "../hooks/useAuth";
 import PromotionalSection from "./components/PromotionalSection";
 import Banner from "../../components/shared/Banner";
+import ContactBanner from "../../components/ContactBanner";
 
 
 const Browse = () => {
@@ -88,6 +89,13 @@ const Browse = () => {
         {/* Explore Products Section */}
         <PromotionalSection />
         <ExploreProduct />
+
+        {/* Contact Banner */}
+        <ContactBanner
+          message="Questions about our products?"
+          showHours={true}
+          className="shadow-xl"
+        />
       </div>
     </div>
   );

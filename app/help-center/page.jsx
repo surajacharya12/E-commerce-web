@@ -15,6 +15,8 @@ import {
     FiClock
 } from "react-icons/fi";
 import HelpCenterNav from "../components/HelpCenterNav";
+import ContactBanner from "../../components/ContactBanner";
+import { contactInfo } from '@/lib/info';
 
 export default function HelpCenter() {
     const [activeSection, setActiveSection] = useState("customer-service");
@@ -185,17 +187,17 @@ export default function HelpCenter() {
                             <div className="mt-6 md:mt-8 pt-6 border-t border-gray-200">
                                 <h3 className="font-bold text-gray-900 mb-4">Need More Help?</h3>
                                 <div className="space-y-3">
-                                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                    <a href={contactInfo.phone.link} className="flex items-center space-x-2 text-sm text-gray-600 hover:text-indigo-600 transition-colors">
                                         <FiPhone className="w-4 h-4" />
-                                        <span>+1-800-123-4567</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                        <span>{contactInfo.phone.display}</span>
+                                    </a>
+                                    <a href={contactInfo.email.link} className="flex items-center space-x-2 text-sm text-gray-600 hover:text-indigo-600 transition-colors">
                                         <FiMail className="w-4 h-4" />
-                                        <span>support@store.com</span>
-                                    </div>
+                                        <span>{contactInfo.email.display}</span>
+                                    </a>
                                     <div className="flex items-center space-x-2 text-sm text-gray-600">
                                         <FiClock className="w-4 h-4" />
-                                        <span>24/7 Live Chat</span>
+                                        <span>{contactInfo.businessHours.weekdays}</span>
                                     </div>
                                 </div>
                             </div>
@@ -264,12 +266,20 @@ export default function HelpCenter() {
                                         Can't find what you're looking for? Our support team is ready to assist you.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                                        <button className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                                            Start Live Chat
-                                        </button>
-                                        <button className="px-6 py-3 border border-indigo-300 text-indigo-600 font-medium rounded-xl hover:bg-indigo-50 transition-colors">
+                                        <a
+                                            href={contactInfo.phone.whatsapp + "?text=" + encodeURIComponent("Hi! I need help from the help center.")}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-center"
+                                        >
+                                            Start WhatsApp Chat
+                                        </a>
+                                        <a
+                                            href={contactInfo.email.link}
+                                            className="px-6 py-3 border border-indigo-300 text-indigo-600 font-medium rounded-xl hover:bg-indigo-50 transition-colors text-center"
+                                        >
                                             Send Email
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

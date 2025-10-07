@@ -20,6 +20,13 @@ import {
     FiMessageCircle
 } from 'react-icons/fi';
 import HelpCenterNav from "../components/HelpCenterNav";
+import ContactInfo, { PhoneNumber, EmailAddress, WhatsAppButton } from "../../components/ContactInfo";
+import CustomerHeader from './components/CustomerHeader';
+import ContactMethods from './components/ContactMethods';
+import ContactForm from './components/ContactForm';
+import ContactInfoPanel from './components/ContactInfoPanel';
+import QuickFAQ from './components/QuickFAQ';
+import { contactInfo } from '@/lib/info';
 
 export default function CustomerService() {
     const form = useRef();
@@ -101,28 +108,30 @@ export default function CustomerService() {
         }
     };
 
-    const contactInfo = [
+    const contactInfoCards = [
         {
             icon: <FiMail className="w-5 h-5" />,
             title: "Email Us",
-            value: "support@shopease.com",
+            value: contactInfo.email.display,
             description: "Get in touch via email",
             color: "text-blue-600",
-            bgColor: "bg-blue-50"
+            bgColor: "bg-blue-50",
+            link: contactInfo.email.link
         },
         {
             icon: <FiPhone className="w-5 h-5" />,
             title: "Call Us",
-            value: "+1 (555) 123-4567",
-            description: "Mon-Fri, 9AM-6PM EST",
+            value: contactInfo.phone.display,
+            description: contactInfo.businessHours.weekdays,
             color: "text-green-600",
-            bgColor: "bg-green-50"
+            bgColor: "bg-green-50",
+            link: contactInfo.phone.link
         },
         {
             icon: <FiMapPin className="w-5 h-5" />,
             title: "Visit Us",
-            value: "123 Commerce St",
-            description: "New York, NY 10001",
+            value: contactInfo.address.street,
+            description: `${contactInfo.address.city}, ${contactInfo.address.state} ${contactInfo.address.zip}`,
             color: "text-purple-600",
             bgColor: "bg-purple-50"
         }
@@ -176,275 +185,39 @@ export default function CustomerService() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 mt-16 md:mt-0">
             <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
-                {/* Header */}
-                <div className="bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl border border-white/20 mb-4 md:mb-8">
-                    <div className="text-center">
-                        <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6">
-                            <FiHelpCircle className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                        </div>
-                        <h1 className="text-2xl md:text-4xl font-black text-gray-900 mb-2">Customer Service</h1>
-                        <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
-                            We're here to help! Choose your preferred way to get in touch with our support team.
-                        </p>
-                    </div>
-                </div>
+                <CustomerHeader subtitle={"We're here to help! Choose your preferred way to get in touch with our support team."} />
 
                 {/* Help Center Navigation */}
                 <HelpCenterNav />
 
-                {/* Contact Methods */}
-                <div className="mb-8 md:mb-12">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 text-center">
-                        Get In Touch
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
-                        {contactMethods.map((method, index) => {
-                            const Icon = method.icon;
-                            return (
-                                <div key={index} className="bg-white/80 backdrop-blur-xl rounded-2xl p-4 md:p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
-                                    <div className="flex items-start space-x-4">
-                                        <div className={`w-12 h-12 md:w-14 md:h-14 bg-gradient-to-r ${method.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
-                                            <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1">{method.title}</h3>
-                                            <p className="text-gray-600 text-sm md:text-base mb-2">{method.description}</p>
-                                            <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3 md:mb-4">
-                                                <FiClock className="w-4 h-4" />
-                                                <span>{method.availability}</span>
-                                            </div>
-                                            <button className={`px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r ${method.color} text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base`}>
-                                                {method.action}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
+                <ContactMethods methods={contactMethods} />
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                    {/* Contact Form */}
                     <div className="order-2 lg:order-1">
-                        <div className="bg-white/90 rounded-3xl shadow-xl backdrop-blur-xl border border-gray-200 p-6 md:p-8">
-                            <div className="mb-6">
-                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Send us a Message</h2>
-                                <p className="text-gray-600">Fill out the form below and we'll get back to you soon.</p>
-                            </div>
-
-                            {/* Success Message */}
-                            {status === 'success' && (
-                                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-2xl">
-                                    <div className="flex items-center gap-3">
-                                        <FiCheckCircle className="w-5 h-5 text-green-600" />
+                        <ContactForm formRef={form} formData={formData} handleInputChange={handleInputChange} sendEmail={sendEmail} status={status} errors={errors} />
+                        <div className="mt-8 pt-6 border-t border-gray-200">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {features.map((feature, index) => (
+                                    <div key={index} className="flex items-center gap-3">
+                                        <div className="text-blue-600">{feature.icon}</div>
                                         <div>
-                                            <h4 className="font-semibold text-green-800">Message Sent Successfully!</h4>
-                                            <p className="text-green-700 text-sm">We'll get back to you within 24 hours.</p>
+                                            <h4 className="font-semibold text-gray-900 text-sm">{feature.title}</h4>
+                                            <p className="text-gray-600 text-xs">{feature.description}</p>
                                         </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Error Message */}
-                            {status === 'error' && (
-                                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
-                                    <div className="flex items-center gap-3">
-                                        <FiAlertCircle className="w-5 h-5 text-red-600" />
-                                        <div>
-                                            <h4 className="font-semibold text-red-800">Failed to Send Message</h4>
-                                            <p className="text-red-700 text-sm">Please try again or contact us directly.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <form ref={form} onSubmit={sendEmail} className="space-y-6">
-                                {/* Name Field */}
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <FiUser className="w-5 h-5 text-gray-400" />
-                                        </div>
-                                        <input
-                                            type="text"
-                                            name="user_name"
-                                            value={formData.user_name}
-                                            onChange={handleInputChange}
-                                            className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${errors.user_name ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
-                                                }`}
-                                            placeholder="Enter your full name"
-                                        />
-                                    </div>
-                                    {errors.user_name && (
-                                        <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                                            <FiAlertCircle className="w-4 h-4" />
-                                            {errors.user_name}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* Email Field */}
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <FiMail className="w-5 h-5 text-gray-400" />
-                                        </div>
-                                        <input
-                                            type="email"
-                                            name="user_email"
-                                            value={formData.user_email}
-                                            onChange={handleInputChange}
-                                            className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${errors.user_email ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
-                                                }`}
-                                            placeholder="Enter your email address"
-                                        />
-                                    </div>
-                                    {errors.user_email && (
-                                        <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                                            <FiAlertCircle className="w-4 h-4" />
-                                            {errors.user_email}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* Subject Field */}
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Subject *</label>
-                                    <select
-                                        name="subject"
-                                        value={formData.subject}
-                                        onChange={handleInputChange}
-                                        className={`w-full px-4 py-4 bg-gray-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${errors.subject ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
-                                            }`}
-                                    >
-                                        <option value="">Select a subject</option>
-                                        <option value="General Inquiry">General Inquiry</option>
-                                        <option value="Product Support">Product Support</option>
-                                        <option value="Order Issue">Order Issue</option>
-                                        <option value="Technical Support">Technical Support</option>
-                                        <option value="Billing Question">Billing Question</option>
-                                        <option value="Partnership">Partnership</option>
-                                        <option value="Feedback">Feedback</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                    {errors.subject && (
-                                        <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                                            <FiAlertCircle className="w-4 h-4" />
-                                            {errors.subject}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* Message Field */}
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message *</label>
-                                    <div className="relative">
-                                        <div className="absolute top-4 left-4 pointer-events-none">
-                                            <FiMessageSquare className="w-5 h-5 text-gray-400" />
-                                        </div>
-                                        <textarea
-                                            name="message"
-                                            value={formData.message}
-                                            onChange={handleInputChange}
-                                            rows={6}
-                                            className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none ${errors.message ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
-                                                }`}
-                                            placeholder="Tell us how we can help you..."
-                                        />
-                                    </div>
-                                    {errors.message && (
-                                        <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                                            <FiAlertCircle className="w-4 h-4" />
-                                            {errors.message}
-                                        </p>
-                                    )}
-                                    <p className="mt-2 text-sm text-gray-500">{formData.message.length}/500 characters</p>
-                                </div>
-
-                                {/* Submit Button */}
-                                <button
-                                    type="submit"
-                                    disabled={status === 'loading'}
-                                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
-                                >
-                                    {status === 'loading' ? (
-                                        <>
-                                            <FiLoader className="w-5 h-5 animate-spin" />
-                                            Sending Message...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FiSend className="w-5 h-5" />
-                                            Send Message
-                                        </>
-                                    )}
-                                </button>
-                            </form>
-
-                            {/* Features */}
-                            <div className="mt-8 pt-6 border-t border-gray-200">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {features.map((feature, index) => (
-                                        <div key={index} className="flex items-center gap-3">
-                                            <div className="text-blue-600">{feature.icon}</div>
-                                            <div>
-                                                <h4 className="font-semibold text-gray-900 text-sm">{feature.title}</h4>
-                                                <p className="text-gray-600 text-xs">{feature.description}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Contact Information - Desktop */}
-                    <div className="order-1 lg:order-2">
-                        <div className="space-y-6">
-                            {/* Contact Info Cards */}
-                            <div className="space-y-4">
-                                {contactInfo.map((info, index) => (
-                                    <div key={index} className="bg-white/90 rounded-3xl shadow-xl backdrop-blur-xl border border-gray-200 p-6">
-                                        <div className={`inline-flex items-center justify-center w-12 h-12 ${info.bgColor} rounded-2xl mb-4`}>
-                                            <div className={info.color}>{info.icon}</div>
-                                        </div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2">{info.title}</h3>
-                                        <p className="text-gray-900 font-semibold text-lg mb-1">{info.value}</p>
-                                        <p className="text-gray-600">{info.description}</p>
                                     </div>
                                 ))}
                             </div>
-
-                            {/* FAQ Section */}
-                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-xl p-6 md:p-8 text-white">
-                                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                                    <FiStar className="w-6 h-6" />
-                                    Quick Help
-                                </h3>
-                                <div className="space-y-4">
-                                    <div className="bg-white/20 rounded-2xl p-4">
-                                        <h4 className="font-semibold mb-2">Order Status</h4>
-                                        <p className="text-blue-100 text-sm">Check your order status in your account dashboard or email us your order number.</p>
-                                    </div>
-                                    <div className="bg-white/20 rounded-2xl p-4">
-                                        <h4 className="font-semibold mb-2">Returns & Refunds</h4>
-                                        <p className="text-blue-100 text-sm">We offer 30-day returns on most items. Visit our returns page for details.</p>
-                                    </div>
-                                    <div className="bg-white/20 rounded-2xl p-4">
-                                        <h4 className="font-semibold mb-2">Technical Issues</h4>
-                                        <p className="text-blue-100 text-sm">Having trouble with our website? Try clearing your browser cache first.</p>
-                                    </div>
-                                    <div className="bg-white/20 rounded-xl p-6">
-                                        <h4 className="font-semibold mb-3">Response Time</h4>
-                                        <p className="text-blue-100">We typically respond within 24-48 hours</p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
+                    </div>
+
+                    <div className="order-1 lg:order-2">
+                        <ContactInfoPanel contactInfoCards={contactInfoCards} WhatsAppButtonComponent={<WhatsAppButton message="Hi! I need help with my order." className="w-full justify-center" />} />
+                        <QuickFAQ faqs={[
+                            { title: 'Order Status', body: 'Check your order status in your account dashboard or email us your order number.' },
+                            { title: 'Returns & Refunds', body: 'We offer 30-day returns on most items. Visit our returns page for details.' },
+                            { title: 'Technical Issues', body: 'Having trouble with our website? Try clearing your browser cache first.' },
+                            { title: 'Response Time', body: 'We typically respond within 24-48 hours' }
+                        ]} />
                     </div>
                 </div>
             </div>

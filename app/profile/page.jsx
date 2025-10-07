@@ -12,6 +12,7 @@ import DesktopView from "./components/DesktopView";
 // Hooks
 import { useProfileData } from "./hooks/useProfileData";
 import { useProfileActions } from "./hooks/useProfileActions";
+import ContactBanner from "../../components/ContactBanner";
 
 const ProfilePage = () => {
   const { isLoggedIn, userEmail, loading } = useAuth();
@@ -35,6 +36,15 @@ const ProfilePage = () => {
         isEditing={isEditing}
         actions={actions}
       />
+
+      {/* Contact Banner */}
+      <div className="max-w-6xl mx-auto px-4 pb-8">
+        <ContactBanner
+          variant="minimal"
+          message="Need help with your account?"
+          className="shadow-lg"
+        />
+      </div>
 
       {/* Toast Container */}
       <ToastContainer

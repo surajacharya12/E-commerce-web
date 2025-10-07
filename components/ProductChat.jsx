@@ -2,11 +2,34 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { FiMessageCircle, FiSend, FiX, FiUser, FiClock, FiCheck, FiCheckCheck } from 'react-icons/fi';
+import ChatToggle from './chat/ChatToggle';
+import ChatWindow from './chat/ChatWindow';
 import { useAuth } from '../app/hooks/useAuth';
 import API_URL from '../app/api/api';
 import { toast } from 'react-toastify';
 
-const ProductChat = ({ productId, productName }) => {
+const ProductChat = ({ productId, productName, externalOpen = null, onExternalClose = null }) => {
+    // Helper to render an icon from react-icons safely.
+    // If the imported icon is undefined (e.g. missing export), render a tiny inline SVG fallback so UI doesn't break.
+    const SafeIcon = ({ Icon, className = '', children }) => {
+        if (Icon) return <Icon className={className} />;
+        // Generic fallback SVG uses currentColor so Tailwind color classes still apply.
+        return (
+            <svg
+                className={className}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                {children}
+            </svg>
+        );
+    };
+
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
@@ -26,10 +49,23 @@ const ProductChat = ({ productId, productName }) => {
 
     // Initialize or get existing chat
     useEffect(() => {
-        if (isLoggedIn && userData && productId && isOpen) {
+        // If the chat is open (either internally or via external control), initialize
+        const currentlyOpen = isOpen || !!externalOpen;
+        if (isLoggedIn && userData && productId && currentlyOpen) {
             initializeChat();
         }
-    }, [isLoggedIn, userData, productId, isOpen]);
+    }, [isLoggedIn, userData, productId, isOpen, externalOpen]);
+
+    // Sync external open state (if provided) to local isOpen
+    useEffect(() => {
+        if (externalOpen === null) return;
+        if (externalOpen) {
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
+            if (typeof onExternalClose === 'function') onExternalClose();
+        }
+    }, [externalOpen]);
 
     const initializeChat = async () => {
         if (!userData?.id || !userData?.name || !userData?.email) return;
@@ -118,130 +154,29 @@ const ProductChat = ({ productId, productName }) => {
         }
     };
 
-    if (!isLoggedIn) {
-        return (
-            <div className="fixed bottom-6 right-6 z-50">
-                <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/20 max-w-sm">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <FiMessageCircle className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                            <p className="font-semibold text-slate-800">Have questions?</p>
-                            <p className="text-sm text-slate-600">Please log in to chat with us</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // When controlled externally (externalOpen !== null) we respect that control
+    // Otherwise we render a floating toggle button so users can open the chat.
 
     return (
         <div className="fixed bottom-6 right-6 z-50">
-            {/* Chat Toggle Button */}
-            {!isOpen && (
-                <button
-                    onClick={() => setIsOpen(true)}
-                    className="relative bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110"
-                >
-                    <FiMessageCircle className="w-6 h-6" />
-                    {unreadCount > 0 && (
-                        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold animate-pulse">
-                            {unreadCount > 9 ? '9+' : unreadCount}
-                        </div>
-                    )}
-                </button>
+            {externalOpen === null && !isOpen && (
+                <ChatToggle onOpen={() => setIsOpen(true)} unreadCount={unreadCount} />
             )}
 
-            {/* Chat Window */}
-            {isOpen && (
-                <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 w-80 h-96 flex flex-col animate-slide-up">
-                    {/* Header */}
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                                <FiUser className="w-4 h-4" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Product Support</h3>
-                                <p className="text-xs opacity-90 truncate max-w-32">{productName}</p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="p-1 hover:bg-white/20 rounded-full transition-colors"
-                        >
-                            <FiX className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                        {loading && messages.length === 0 ? (
-                            <div className="flex items-center justify-center h-full">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                            </div>
-                        ) : messages.length === 0 ? (
-                            <div className="text-center text-slate-500 mt-8">
-                                <FiMessageCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                                <p className="text-sm">Start a conversation!</p>
-                                <p className="text-xs mt-1">Ask us anything about this product</p>
-                            </div>
-                        ) : (
-                            messages.map((message, index) => (
-                                <div
-                                    key={index}
-                                    className={`flex ${message.sender === 'customer' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div
-                                        className={`max-w-[80%] p-3 rounded-2xl ${message.sender === 'customer'
-                                            ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
-                                            : 'bg-slate-100 text-slate-800'
-                                            }`}
-                                    >
-                                        <p className="text-sm">{message.message}</p>
-                                        <div className={`flex items-center justify-end mt-1 space-x-1 ${message.sender === 'customer' ? 'text-white/70' : 'text-slate-500'
-                                            }`}>
-                                            <span className="text-xs">{formatTime(message.timestamp)}</span>
-                                            {message.sender === 'customer' && (
-                                                <div className="text-xs">
-                                                    {message.isRead ? (
-                                                        <FiCheckCheck className="w-3 h-3" />
-                                                    ) : (
-                                                        <FiCheck className="w-3 h-3" />
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    {/* Input */}
-                    <div className="p-4 border-t border-slate-200">
-                        <div className="flex items-center space-x-2">
-                            <input
-                                type="text"
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="Type your message..."
-                                className="flex-1 px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                                disabled={loading}
-                            />
-                            <button
-                                onClick={sendMessage}
-                                disabled={!newMessage.trim() || loading}
-                                className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <FiSend className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            {(isOpen || externalOpen) && (
+                <ChatWindow
+                    productName={productName}
+                    messages={messages}
+                    loading={loading}
+                    unreadCount={unreadCount}
+                    onClose={() => { setIsOpen(false); if (typeof onExternalClose === 'function') onExternalClose(); }}
+                    newMessage={newMessage}
+                    setNewMessage={setNewMessage}
+                    onSend={sendMessage}
+                    handleKeyPress={handleKeyPress}
+                    messagesEndRef={messagesEndRef}
+                    formatTime={formatTime}
+                />
             )}
         </div>
     );

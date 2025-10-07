@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiArrowLeft } from "react-icons/fi";
 import { displayPrice } from "../utils/currency";
+import ContactBanner from "../../components/ContactBanner";
 
 const CartPage = () => {
     const { cart, updateQuantity, removeFromCart, clearCart, loading } = useCart();
@@ -279,6 +280,15 @@ const CartPage = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+
+                {/* Contact Banner */}
+                <div className="mt-8">
+                    <ContactBanner
+                        variant="minimal"
+                        message="Questions about your order?"
+                        className="shadow-lg"
+                    />
                 </div>
             </div>
         </div>
