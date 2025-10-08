@@ -152,10 +152,7 @@ export default function OrderSlipPage() {
                     <div>${order.deliveryMethod === 'storeDelivery' ? 'Pickup Fee:' : 'Delivery Fee:'}</div>
                     <div>₹${order.orderTotal?.deliveryFee || (order.deliveryMethod === 'homeDelivery' ? '150' : order.deliveryMethod === 'storeDelivery' ? '100' : '50')}</div>
                 </div>
-                <div class="item-row">
-                    <div>Tax (10%):</div>
-                    <div>₹${order.orderTotal?.tax || Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</div>
-                </div>
+                <!-- Tax removed per request -->
                 ${order.orderTotal?.discount > 0 ? `
                 <div class="item-row">
                     <div>Discount:</div>

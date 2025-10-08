@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 
-const ExpandableDescription = ({ description, maxLength = 300, maxLines = 4 }) => {
+const ExpandableDescription = ({ description, points = [], maxLength = 300, maxLines = 4 }) => {
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     // Check if description is long enough to need expansion
@@ -19,6 +19,19 @@ const ExpandableDescription = ({ description, maxLength = 300, maxLines = 4 }) =
                 <p className={`${!showFullDescription ? 'line-clamp-4' : ''} transition-all duration-300`}>
                     {description}
                 </p>
+
+                {/* Render points (highlights) if provided */}
+                {points && Array.isArray(points) && points.length > 0 && (
+                    <div className="mt-4">
+                        <h4 className="font-semibold text-slate-800 mb-2">Highlights</h4>
+                        <ul className="list-disc list-inside text-slate-700 space-y-1">
+                            {points.map((p, idx) => (
+                                <li key={idx}>{p}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 {needsExpansion && (
                     <button
                         onClick={() => setShowFullDescription(!showFullDescription)}

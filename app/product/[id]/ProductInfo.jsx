@@ -65,17 +65,17 @@ const ProductInfo = ({ product, quantity, setQuantity, handleAddToCart, handleBu
                 {/* Price */}
                 <div className="flex items-center space-x-4 mb-6">
                     <span className="text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                        Rs. {(product.offerPrice || product.price).toFixed(2)}
-                    </span>
+                            Rs. {(product.offerPrice || product.price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
                     {product.offerPrice && product.price > product.offerPrice && (
                         <span className="text-xl text-slate-400 line-through">
-                            Rs. {product.price.toFixed(2)}
+                            Rs. {product.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                     )}
                 </div>
             </div>
 
-            <ExpandableDescription description={product.description} />
+            <ExpandableDescription description={product.description} points={product.points || []} />
 
             {/* Quantity and Actions */}
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
@@ -165,6 +165,7 @@ const ProductInfo = ({ product, quantity, setQuantity, handleAddToCart, handleBu
                     </div>
                 </div>
             </div>
+            {/* Points/hightlights are now rendered inside ExpandableDescription */}
         </div>
     );
 };

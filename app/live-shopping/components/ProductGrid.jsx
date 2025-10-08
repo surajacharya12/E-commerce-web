@@ -79,7 +79,8 @@ const ProductGrid = ({ products, filteredProducts, categoryName, subCategoryName
       ) : (
         <>
           {/* Modern Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6">
+          {/* Use up to 3 columns on xl to give each card more width; 2xl keep 4 if desired */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6">
             {currentProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

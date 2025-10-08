@@ -136,10 +136,7 @@ export default function ReceiptPage() {
                     <div>${order.deliveryMethod === 'storeDelivery' ? 'Pickup Fee:' : 'Delivery Fee:'}</div>
                     <div>₹${order.orderTotal?.deliveryFee || (order.deliveryMethod === 'homeDelivery' ? '150' : order.deliveryMethod === 'storeDelivery' ? '100' : '50')}</div>
                 </div>
-                <div class="item-row">
-                    <div>Tax (10%):</div>
-                    <div>₹${order.orderTotal?.tax || Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</div>
-                </div>
+                <!-- Tax removed per request -->
                 ${order.orderTotal?.discount > 0 ? `
                 <div class="item-row">
                     <div>Discount:</div>
@@ -325,8 +322,7 @@ export default function ReceiptPage() {
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Tax (10%):</span>
-                                    <span className="font-semibold">₹{order.orderTotal?.tax !== undefined ? order.orderTotal.tax : Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</span>
+                                    {/* Tax removed per request */}
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Discount:</span>

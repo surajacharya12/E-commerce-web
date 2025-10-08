@@ -72,7 +72,24 @@ const ProductListingContent = () => {
           setProducts(data);
 
           const extractUnique = (data, keyFn) => {
-            return [...new Map(data.map(keyFn).filter(item => item && item._id).map(item => [item._id, item])).values()];
+            // keyFn may return a single populated object or an array of populated objects
+            const items = data.flatMap(p => {
+              const v = keyFn(p);
+              if (!v) return [];
+              if (Array.isArray(v)) return v.filter(Boolean);
+              return [v];
+            })
+            // Normalize so every item has _id (fallback to id)
+            .map(item => {
+              if (!item) return null;
+              const id = item._id || item.id || (item._id === 0 ? 0 : undefined);
+              if (!id) return null;
+              // return a shallow clone with guaranteed _id
+              return { ...item, _id: id };
+            })
+            .filter(Boolean);
+
+            return [...new Map(items.map(item => [item._id, item])).values()];
           };
 
           setCategories(extractUnique(data, p => p.proCategoryId));
@@ -106,6 +123,24 @@ const ProductListingContent = () => {
     fetchProducts();
   }, [categoryId, subCategoryId]);
 
+  // Ensure we have a full list of variants (in case products don't include populated variant objects)
+  useEffect(() => {
+    const fetchVariants = async () => {
+      try {
+        const res = await fetch(`${API_URL}/variants`);
+        if (!res.ok) throw new Error('Failed to fetch variants');
+        const result = await res.json();
+        if (result.success) {
+          setVariants(result.data || []);
+        }
+      } catch (e) {
+        // silent fail - variants may already be set from products
+        console.warn('Could not fetch variants:', e.message);
+      }
+    };
+    fetchVariants();
+  }, []);
+
   // Update search term when URL parameter changes
   useEffect(() => {
     if (urlSearchTerm !== null) {
@@ -122,7 +157,15 @@ const ProductListingContent = () => {
       if (selectedSubCategories.length > 0 && !selectedSubCategories.includes(product.proSubCategoryId?._id)) return false;
       if (selectedBrands.length > 0 && !selectedBrands.includes(product.proBrandId?._id)) return false;
       if (selectedVariantTypes.length > 0 && !selectedVariantTypes.includes(product.proVariantTypeId?._id)) return false;
-      if (selectedVariants.length > 0 && !selectedVariants.includes(product.proVariantId?._id)) return false;
+      if (selectedVariants.length > 0) {
+        // product.proVariantId can be an array (schema) or a populated single object
+        const productVariantIds = Array.isArray(product.proVariantId)
+          ? product.proVariantId.map(v => (v && (v._id || v)) )
+          : (product.proVariantId ? [product.proVariantId._id || product.proVariantId] : []);
+
+        const hasMatch = productVariantIds.some(id => selectedVariants.includes(id));
+        if (!hasMatch) return false;
+      }
       if (selectedRatings.length > 0 && !selectedRatings.some(minRating => (product.rating?.averageRating || 0) >= minRating)) return false;
 
       // Search filter
@@ -175,7 +218,7 @@ const ProductListingContent = () => {
               <span className="font-medium text-sm md:text-base">Categories</span>
             </a>
             <div className="w-1.5 h-1.5 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full flex-shrink-0"></div>
-            <span className="font-semibold text-slate-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent text-sm md:text-base truncate">
+            <span className="font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent text-sm md:text-base truncate">
               {categoryName || subCategoryName}
             </span>
           </nav>
@@ -250,13 +293,19 @@ const ProductListingContent = () => {
             categories={categories}
             subCategories={subCategories}
             brands={brands}
+            variantTypes={variantTypes}
+            variants={variants}
             selectedCategories={selectedCategories}
             selectedSubCategories={selectedSubCategories}
             selectedBrands={selectedBrands}
+            selectedVariantTypes={selectedVariantTypes}
+            selectedVariants={selectedVariants}
             selectedRatings={selectedRatings}
             setSelectedCategories={setSelectedCategories}
             setSelectedSubCategories={setSelectedSubCategories}
             setSelectedBrands={setSelectedBrands}
+            setSelectedVariantTypes={setSelectedVariantTypes}
+            setSelectedVariants={setSelectedVariants}
             setSelectedRatings={setSelectedRatings}
             toggleFilter={toggleFilter}
             isAnyFilterActive={isAnyFilterActive}

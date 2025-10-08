@@ -14,16 +14,6 @@ export default function OrderSummary({ order }) {
         return (order.orderTotal?.subtotal || order.totalPrice) > 500 ? 'Free' : '₹50';
     };
 
-    const getTaxAmount = () => {
-        // Use backend-calculated tax if available
-        if (order.orderTotal?.tax !== undefined) {
-            return order.orderTotal.tax;
-        }
-
-        // Fallback calculation
-        return Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1);
-    };
-
     return (
         <div className="bg-gradient-to-r from-gray-50 to-indigo-50 rounded-2xl p-6 mb-8">
             <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -41,10 +31,7 @@ export default function OrderSummary({ order }) {
                     </span>
                     <span className="font-semibold">{getDeliveryFee()}</span>
                 </div>
-                <div className="flex justify-between">
-                    <span className="text-gray-600">Tax (10%):</span>
-                    <span className="font-semibold">₹{getTaxAmount()}</span>
-                </div>
+                {/* Tax removed per request */}
                 <div className="flex justify-between">
                     <span className="text-gray-600">Discount:</span>
                     <span className="font-semibold text-green-600">-₹{order.orderTotal?.discount || 0}</span>

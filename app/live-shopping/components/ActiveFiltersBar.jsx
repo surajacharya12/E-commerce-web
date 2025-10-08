@@ -8,13 +8,19 @@ const ActiveFiltersBar = ({
   categories,
   subCategories,
   brands,
+  variantTypes,
+  variants,
   selectedCategories,
   selectedSubCategories,
   selectedBrands,
+  selectedVariantTypes,
+  selectedVariants,
   selectedRatings,
   setSelectedCategories,
   setSelectedSubCategories,
   setSelectedBrands,
+  setSelectedVariantTypes,
+  setSelectedVariants,
   setSelectedRatings,
   toggleFilter,
   isAnyFilterActive,
@@ -148,6 +154,46 @@ const ActiveFiltersBar = ({
               <button
                 className="ml-1 text-blue-600 hover:text-blue-900"
                 onClick={() => toggleFilter(selectedBrands, setSelectedBrands, id)}
+              >
+                &times;
+              </button>
+            </span>
+          )
+        );
+      })}
+
+      {selectedVariantTypes && selectedVariantTypes.map((id) => {
+        const vt = (variantTypes || []).find((v) => v._id === id);
+        return (
+          vt && (
+            <span
+              key={id}
+              className="bg-fuchsia-100 text-fuchsia-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center"
+            >
+              {vt.type || vt.name}
+              <button
+                className="ml-1 text-fuchsia-600 hover:text-fuchsia-900"
+                onClick={() => toggleFilter(selectedVariantTypes, setSelectedVariantTypes, id)}
+              >
+                &times;
+              </button>
+            </span>
+          )
+        );
+      })}
+
+      {selectedVariants && selectedVariants.map((id) => {
+        const v = (variants || []).find((it) => it._id === id);
+        return (
+          v && (
+            <span
+              key={id}
+              className="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center"
+            >
+              {v.name}
+              <button
+                className="ml-1 text-rose-600 hover:text-rose-900"
+                onClick={() => toggleFilter(selectedVariants, setSelectedVariants, id)}
               >
                 &times;
               </button>

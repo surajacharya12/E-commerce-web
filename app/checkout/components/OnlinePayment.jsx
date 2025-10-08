@@ -78,11 +78,10 @@ export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, sel
             // Simulate payment processing
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            // Calculate order totals
+            // Calculate order totals (tax removed)
             const subtotal = cart.totalAmount;
             const currentDeliveryFee = deliveryFee || 0;
-            const tax = Math.round(subtotal * 0.1);
-            const total = subtotal + currentDeliveryFee + tax;
+            const total = subtotal + currentDeliveryFee;
 
             // Prepare order data for backend
             const orderData = {

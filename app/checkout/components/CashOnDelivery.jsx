@@ -58,10 +58,9 @@ export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, se
 
             const subtotal = cart.totalAmount;
             const currentDeliveryFee = deliveryFee || 0;
-            const tax = Math.round(subtotal * 0.1);
-            const total = subtotal + currentDeliveryFee + tax;
+            const total = subtotal + currentDeliveryFee;
 
-            console.log("💰 Order totals:", { subtotal, deliveryFee: currentDeliveryFee, tax, total });
+            console.log("💰 Order totals:", { subtotal, deliveryFee: currentDeliveryFee, total });
 
             // Prepare order data for backend
             const orderData = {

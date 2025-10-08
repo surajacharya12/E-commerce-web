@@ -251,15 +251,12 @@ const CartPage = () => {
                                     <span className="text-gray-600">Shipping</span>
                                     <span className="font-semibold text-green-600">Free</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Tax</span>
-                                    <span className="font-semibold">{displayPrice(cart.totalAmount * 0.1)}</span>
-                                </div>
+                                {/* Tax removed per request */}
                                 <hr className="border-gray-200" />
                                 <div className="flex justify-between text-lg">
                                     <span className="font-bold text-gray-800">Total</span>
                                     <span className="font-bold text-blue-600">
-                                        {displayPrice(cart.totalAmount + cart.totalAmount * 0.1)}
+                                        {displayPrice(cart.totalAmount)}
                                     </span>
                                 </div>
                             </div>

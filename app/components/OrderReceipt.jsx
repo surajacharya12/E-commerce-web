@@ -119,10 +119,7 @@ const OrderReceipt = ({ order, onClose, onDownload, onPrint }) => {
                                     {(order.orderTotal?.subtotal || order.totalPrice) > 500 ? 'Free' : '₹50'}
                                 </span>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">Tax (10%):</span>
-                                <span className="font-semibold">₹{Math.round((order.orderTotal?.subtotal || order.totalPrice) * 0.1)}</span>
-                            </div>
+                            {/* Tax removed per request */}
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Discount:</span>
                                 <span className="font-semibold text-green-600">-₹{order.orderTotal?.discount || 0}</span>

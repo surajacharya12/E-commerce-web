@@ -82,6 +82,8 @@ const AddToCartButton = ({
                 return "bg-white border-2 border-indigo-500 text-indigo-600 hover:bg-indigo-50";
             case "outline":
                 return "bg-transparent border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600";
+                case "gradient":
+                    return "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700";
             case "minimal":
                 return "bg-gray-100 text-gray-700 hover:bg-gray-200";
             default: // primary

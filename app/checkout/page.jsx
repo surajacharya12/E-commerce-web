@@ -45,7 +45,7 @@ export default function CheckOut() {
         return selectedDelivery === DELIVERY_METHODS.HOME ? 150 : 100;
     };
 
-    // Calculate order summary from cart
+    // Calculate order summary from cart (tax removed per product owner request)
     const orderSummary = {
         items: (cart.items || []).map(item => ({
             id: item.productId._id,
@@ -56,8 +56,8 @@ export default function CheckOut() {
         })),
         subtotal: cart.totalAmount || 0,
         deliveryFee: getDeliveryFee(),
-        tax: Math.round((cart.totalAmount || 0) * 0.1), // 10% tax
-        total: (cart.totalAmount || 0) + getDeliveryFee() + Math.round((cart.totalAmount || 0) * 0.1),
+        // tax intentionally removed
+        total: (cart.totalAmount || 0) + getDeliveryFee(),
     };
 
     // Redirect if not logged in or cart is empty
@@ -627,10 +627,7 @@ export default function CheckOut() {
                                     {selectedDelivery ? `₹${getDeliveryFee()}` : 'Select delivery method'}
                                 </span>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span style={{ color: '#64748b' }}>Tax:</span>
-                                <span style={{ color: '#1e293b' }}>₹{orderSummary.tax}</span>
-                            </div>
+                            {/* Tax removed per request */}
                             <div style={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -896,10 +893,7 @@ export default function CheckOut() {
                                     {orderSummary.deliveryFee === 0 ? 'Free' : `₹${orderSummary.deliveryFee}`}
                                 </span>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span style={{ color: '#64748b' }}>Tax:</span>
-                                <span style={{ color: '#1e293b' }}>₹{orderSummary.tax}</span>
-                            </div>
+                            {/* Tax removed per request */}
                             <div style={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
