@@ -81,7 +81,7 @@ const Login = () => {
                             SE
                         </div>
                         <span className="text-white font-black text-3xl tracking-wide bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
-                            ShopEase
+                            ShopSwift
                         </span>
                     </div>
                     <div className="bg-white/20 backdrop-blur-xl border border-white/30 text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-xl hover:bg-white/30 transition-all duration-300">
@@ -152,7 +152,7 @@ const Login = () => {
                                     type="submit"
                                     className="group relative w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-lg shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300 transform hover:scale-105 overflow-hidden"
                                 >
-                                    <span className="relative z-10">Sign In to ShopEase</span>
+                                    <span className="relative z-10">Sign In to ShopSwift</span>
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </button>
                             </form>

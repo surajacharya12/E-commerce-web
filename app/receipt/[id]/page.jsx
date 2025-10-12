@@ -80,7 +80,7 @@ export default function ReceiptPage() {
                 </style>
             </head>
             <body>
-                <div class="center bold">SHOPEASE</div>
+                <div class="center bold">ShopSwift</div>
                 <div class="center small">Receipt</div>
                 <div class="line"></div>
                 
@@ -104,7 +104,7 @@ export default function ReceiptPage() {
                 
                 ${order.deliveryMethod === 'storeDelivery' ? `
                 <div class="bold">PICKUP FROM:</div>
-                <div class="small">${order.selectedStore?.storeName || 'ShopEase Store - Main Branch'}</div>
+                <div class="small">${order.selectedStore?.storeName || 'ShopSwift Store - Main Branch'}</div>
                 <div class="small">${order.selectedStore?.storeLocation || '123 Commerce Street'}</div>
                 <div class="small">${order.selectedStore?.storeLocation ? '' : 'Kathmandu, '}Nepal</div>
                 <div class="small">Ready in 2-3 days</div>
@@ -239,7 +239,7 @@ export default function ReceiptPage() {
                                     <FiCheck className="w-8 h-8" />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-bold">ShopEase</h2>
+                                    <h2 className="text-3xl font-bold">ShopSwift</h2>
                                     <p className="text-indigo-100">Order Confirmation</p>
                                 </div>
                             </div>
@@ -399,7 +399,7 @@ export default function ReceiptPage() {
                                             </>
                                         ) : (
                                             <>
-                                                <p className="font-semibold text-blue-700">ShopEase Store - Main Branch</p>
+                                                <p className="font-semibold text-blue-700">ShopSwift Store - Main Branch</p>
                                                 <p>123 Commerce Street, Shopping District</p>
                                                 <p>Kathmandu, Nepal</p>
                                                 <p className="mt-2 font-medium">Store Hours: 10:00 AM - 8:00 PM</p>
@@ -438,7 +438,7 @@ export default function ReceiptPage() {
 
                         {/* Footer */}
                         <div className="text-center text-gray-500 border-t pt-6">
-                            <p className="mb-2 text-lg">Thank you for shopping with ShopEase!</p>
+                            <p className="mb-2 text-lg">Thank you for shopping with ShopSwift!</p>
                             <p>For any queries, contact us at <a href={contactInfo.email.link} className="text-indigo-600 hover:underline">{contactInfo.email.display}</a> | <a href={contactInfo.phone.link} className="text-indigo-600 hover:underline">{contactInfo.phone.display}</a></p>
                             <p className="mt-4 text-sm">This is a computer-generated receipt and does not require a signature.</p>
                         </div>

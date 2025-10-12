@@ -94,7 +94,7 @@ export default function OrderSlipPage() {
                 </style>
             </head>
             <body>
-                <div class="center bold">SHOPEASE</div>
+                <div class="center bold">ShopSwift</div>
                 <div class="center small">Order Slip</div>
                 <div class="line"></div>
                 
@@ -118,7 +118,7 @@ export default function OrderSlipPage() {
                 
                 ${order.deliveryMethod === 'storeDelivery' ? `
                 <div class="bold">PICKUP LOCATION:</div>
-                <div class="small">${order.selectedStore?.storeName || 'ShopEase Store - Main Branch'}</div>
+                <div class="small">${order.selectedStore?.storeName || 'ShopSwift Store - Main Branch'}</div>
                 <div class="small">${order.selectedStore?.storeLocation || '123 Commerce Street'}</div>
                 <div class="small">${order.selectedStore?.storeLocation ? '' : 'Kathmandu, '}Nepal</div>
                 ${order.selectedStore?.storePhoneNumber ? `<div class="small">Ph: ${order.selectedStore.storePhoneNumber}</div>` : ''}

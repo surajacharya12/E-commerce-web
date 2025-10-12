@@ -1,0 +1,194 @@
+.online-payment-container {
+  background-color: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.online-payment-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.online-payment-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.online-payment-subtitle {
+  color: #64748b;
+  font-size: 16px;
+}
+
+.online-payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.online-payment-section {
+  background-color: #f8fafc;
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.online-payment-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-type-selection {
+  display: flex;
+  gap: 15px;
+}
+
+.card-type-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  background-color: white;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.card-type-option.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.card-type-option input {
+  display: none;
+}
+
+.card-type-icon {
+  font-size: 20px;
+}
+
+.card-type-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.online-payment-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.online-payment-grid-single {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.online-payment-field {
+  margin-bottom: 15px;
+}
+
+.online-payment-field:last-child {
+  margin-bottom: 0;
+}
+
+.online-payment-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.online-payment-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.online-payment-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.security-notice {
+  background-color: #ecfdf5;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #10b981;
+}
+
+.security-notice-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.security-notice-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #065f46;
+  margin: 0;
+}
+
+.security-notice-list {
+  color: #065f46;
+  font-size: 14px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.online-payment-submit-btn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 16px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.online-payment-submit-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+@media (max-width: 768px) {
+  .online-payment-container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .online-payment-grid-two {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-type-selection {
+    flex-direction: column;
+  }
+  
+  .online-payment-title {
+    font-size: 24px;
+  }
+}

@@ -88,7 +88,7 @@ const MobilePrivacyView = () => {
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-3">Privacy Policy</h1>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                    Your privacy is important to us. Learn how ShopEase protects your information.
+                    Your privacy is important to us. Learn how ShopSwift protects your information.
                 </p>
             </div>
 

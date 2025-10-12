@@ -116,7 +116,7 @@ const SignUp = () => {
               SE
             </div>
             <span className="text-white font-black text-3xl tracking-wide bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
-              ShopEase
+              ShopSwift
             </span>
           </div>
           <div className="bg-white/20 backdrop-blur-xl border border-white/30 text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-xl hover:bg-white/30 transition-all duration-300">
@@ -132,7 +132,7 @@ const SignUp = () => {
             <div className="w-full md:w-1/2 p-12 flex flex-col justify-center">
               <div className="text-center mb-10">
                 <h2 className="text-5xl font-black mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Join ShopEase
+                  Join ShopSwift
                 </h2>
                 <p className="text-slate-600 text-lg font-medium">Create your account and start shopping</p>
               </div>

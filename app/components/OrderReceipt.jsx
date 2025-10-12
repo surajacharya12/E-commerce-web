@@ -163,7 +163,7 @@ const OrderReceipt = ({ order, onClose, onDownload, onPrint }) => {
 
                     {/* Footer */}
                     <div className="text-center text-gray-500 text-sm border-t pt-6">
-                        <p className="mb-2">Thank you for shopping with ShopEase!</p>
+                        <p className="mb-2">Thank you for shopping with ShopSwift!</p>
                         <p>For any queries, contact us at {contactInfo.email.display}</p>
                     </div>
                 </div>

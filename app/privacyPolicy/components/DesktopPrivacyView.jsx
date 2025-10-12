@@ -176,14 +176,14 @@ const DesktopPrivacyView = () => {
                             <h1 className="text-4xl font-bold text-gray-900">Privacy Policy</h1>
                             <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                                 <FiHome className="w-4 h-4" />
-                                <span>ShopEase</span>
+                                <span>ShopSwift</span>
                                 <FiChevronRight className="w-4 h-4" />
                                 <span>Privacy Policy</span>
                             </div>
                         </div>
                     </div>
                     <p className="text-gray-600 text-lg max-w-3xl">
-                        Your privacy is important to us. This Privacy Policy explains how ShopEase collects, uses, and protects your information when you use our e-commerce platform.
+                        Your privacy is important to us. This Privacy Policy explains how ShopSwift collects, uses, and protects your information when you use our e-commerce platform.
                     </p>
                 </div>
             </div>

@@ -6,7 +6,7 @@ export default function OrderSlipFooter() {
     return (
         <div className="text-center text-gray-500 border-t-2 border-gray-200 pt-8">
             <div className="mb-4">
-                <h4 className="text-lg font-bold text-gray-800 mb-2">Thank you for shopping with ShopEase!</h4>
+                <h4 className="text-lg font-bold text-gray-800 mb-2">Thank you for shopping with ShopSwift!</h4>
                 <p className="text-lg">We appreciate your business and hope you love your purchase.</p>
             </div>
             <div className="space-y-2">

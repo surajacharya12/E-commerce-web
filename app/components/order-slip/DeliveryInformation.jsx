@@ -33,7 +33,7 @@ export default function DeliveryInformation({ order }) {
                                 </>
                             ) : (
                                 <>
-                                    <p className="font-semibold">ShopEase Store - Main Branch</p>
+                                    <p className="font-semibold">ShopSwift Store - Main Branch</p>
                                     <p>123 Commerce Street, Shopping District</p>
                                     <p>Kathmandu, Nepal</p>
                                     <p className="font-medium mt-2">Store Hours: 10:00 AM - 8:00 PM (Mon-Sun)</p>

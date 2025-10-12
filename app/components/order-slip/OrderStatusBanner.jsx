@@ -13,7 +13,7 @@ export default function OrderStatusBanner({ order }) {
                             <FiShoppingBag className="w-8 h-8" />
                         </div>
                         <div>
-                            <h2 className="text-3xl font-bold">ShopEase</h2>
+                            <h2 className="text-3xl font-bold">ShopSwift</h2>
                             <p className="text-indigo-100">Order Slip</p>
                         </div>
                     </div>

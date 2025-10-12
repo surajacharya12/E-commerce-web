@@ -16,7 +16,7 @@ const Footer = () => (
           <Image src="/assets/logo.png" alt="Logo" width={106} height={106} className="rounded-lg" />
 
           <span className="font-extrabold text-3xl text-gray-800 tracking-wide">
-            ShopEase
+            ShopSwift
           </span>
         </div>
         <p className="text-gray-600 max-w-md text-center leading-relaxed text-sm">
