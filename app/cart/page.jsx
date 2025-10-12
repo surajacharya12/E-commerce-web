@@ -131,30 +131,30 @@ const CartPage = () => {
                                     {/* Clickable Product Section */}
                                     <div
                                         className="flex items-center gap-4 flex-1 cursor-pointer hover:bg-gray-50 rounded-xl p-2 -m-2 transition-colors"
-                                        onClick={() => router.push(`/product/${item.productId._id}`)}
+                                        onClick={() => item?.productId?._id && router.push(`/product/${item.productId._id}`)}
                                     >
                                         {/* Product Image */}
-                                        <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
+                                        <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 relative">
                                             <Image
-                                                src={item.productId.images?.[0]?.url || "/assets/product-placeholder.png"}
-                                                alt={item.productId.name}
-                                                width={96}
-                                                height={96}
-                                                className="w-full h-full object-cover"
+                                                src={item?.productId?.images?.[0]?.url || "/placeholder.png"}
+                                                alt={item?.productId?.name || "Product image"}
+                                                fill
+                                                className="object-cover"
+                                                onError={(e) => (e.currentTarget.src = "/placeholder.png")}
                                             />
                                         </div>
 
                                         {/* Product Details */}
                                         <div className="flex-1 min-w-0">
                                             <h3 className="text-lg font-semibold text-gray-800 truncate hover:text-blue-600 transition-colors">
-                                                {item.productId.name}
+                                                {item?.productId?.name || "Deleted Product"}
                                             </h3>
                                             <p className="text-sm text-gray-500 mb-2">
-                                                {item.productId.proCategoryId?.name}
+                                                {item?.productId?.proCategoryId?.name || "Unknown Category"}
                                             </p>
 
-                                            {/* Product Description with See More */}
-                                            {item.productId.description && (
+                                            {/* Product Description */}
+                                            {item?.productId?.description && (
                                                 <div className="mb-3">
                                                     <p className="text-sm text-gray-600 leading-relaxed">
                                                         {expandedDescriptions[item._id]
@@ -178,20 +178,13 @@ const CartPage = () => {
 
                                             <div className="flex items-center gap-2">
                                                 <span className="text-xl font-bold text-blue-600">
-                                                    {displayPrice(item.price)}
+                                                    {displayPrice(item?.price || 0)}
                                                 </span>
-                                                {item.productId.offerPrice && item.productId.price > item.productId.offerPrice && (
+                                                {item?.productId?.offerPrice && item?.productId?.price > item.productId.offerPrice && (
                                                     <span className="text-sm text-gray-400 line-through">
                                                         {displayPrice(item.productId.price)}
                                                     </span>
                                                 )}
-                                            </div>
-                                            <div className="flex items-center gap-1 text-xs text-blue-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                                Click to view details
                                             </div>
                                         </div>
                                     </div>
@@ -199,7 +192,7 @@ const CartPage = () => {
                                     {/* Quantity Controls */}
                                     <div className="flex items-center gap-3">
                                         <button
-                                            onClick={() => handleQuantityChange(item.productId._id, item.quantity - 1)}
+                                            onClick={() => item?.productId?._id && handleQuantityChange(item.productId._id, item.quantity - 1)}
                                             disabled={loading || item.quantity <= 1}
                                             className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
                                         >
@@ -207,8 +200,8 @@ const CartPage = () => {
                                         </button>
                                         <span className="w-12 text-center font-semibold">{item.quantity}</span>
                                         <button
-                                            onClick={() => handleQuantityChange(item.productId._id, item.quantity + 1)}
-                                            disabled={loading || item.quantity >= item.productId.stock}
+                                            onClick={() => item?.productId?._id && handleQuantityChange(item.productId._id, item.quantity + 1)}
+                                            disabled={loading || item.quantity >= (item?.productId?.stock || 0)}
                                             className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
                                         >
                                             <FiPlus className="w-4 h-4" />
@@ -217,7 +210,7 @@ const CartPage = () => {
 
                                     {/* Remove Button */}
                                     <button
-                                        onClick={() => handleRemoveItem(item.productId._id)}
+                                        onClick={() => item?.productId?._id && handleRemoveItem(item.productId._id)}
                                         disabled={loading}
                                         className="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors disabled:opacity-50"
                                     >
@@ -226,7 +219,7 @@ const CartPage = () => {
                                 </div>
 
                                 {/* Stock Warning */}
-                                {item.productId.stock < 5 && item.productId.stock > 0 && (
+                                {item?.productId?.stock < 5 && item?.productId?.stock > 0 && (
                                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
                                         <p className="text-sm text-yellow-800">
                                             Only {item.productId.stock} left in stock!
@@ -251,7 +244,6 @@ const CartPage = () => {
                                     <span className="text-gray-600">Shipping</span>
                                     <span className="font-semibold text-green-600">Free</span>
                                 </div>
-                                {/* Tax removed per request */}
                                 <hr className="border-gray-200" />
                                 <div className="flex justify-between text-lg">
                                     <span className="font-bold text-gray-800">Total</span>
