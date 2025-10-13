@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useCart } from "../../context/CartContext";
-import { useAuth } from "../../hooks/useAuth";
-import API_URL from "../../api/api";
+import { useCart } from "../../../context/CartContext";
+import { useAuth } from "../../../hooks/useAuth";
+import API_URL from "../../../api/api";
 import { toast } from "react-toastify";
-import OrderSuccessAnimation from "../../components/OrderSuccessAnimation";
+import OrderSuccessAnimation from "../../../components/OrderSuccessAnimation";
 
 export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, selectedStore }) {
     const [codDetails, setCodDetails] = useState({

@@ -8,8 +8,8 @@ import { toast } from "react-toastify";
 import API_URL from "../api/api";
 import DeliveryMethodStep from "./components/DeliveryMethodStep";
 import PaymentMethodStep from "./components/PaymentMethodStep";
-import CashOnDelivery from "./components/CashOnDelivery";
-import OnlinePayment from "./components/OnlinePayment";
+import CashOnDelivery from "./components/steps/CashOnDelivery";
+import OnlinePayment from "./components/steps/OnlinePayment";
 import OrderSummary from "./components/OrderSummary"; // New summary component
 
 export const PAYMENT_METHODS = {
@@ -108,7 +108,8 @@ export default function CheckOut() {
 
     const handlePaymentMethodSelect = (method) => {
         setSelectedPayment(method);
-        setCurrentStep(CHECKOUT_STEPS.PAYOUT_FORM);
+        // FIX: Corrected typo from CHECKOUT_STEPS.PAYOUT_FORM to CHECKOUT_STEPS.PAYMENT_FORM
+        setCurrentStep(CHECKOUT_STEPS.PAYMENT_FORM);
     };
 
     const handleOrderSubmit = async (paymentData) => {
@@ -158,7 +159,8 @@ export default function CheckOut() {
                 maxWidth: '800px',
                 width: '100%',
                 display: 'grid',
-                gridTemplateColumns: currentStep === CHECKOUT_STEPS.PAYMENT_FORM ? '1fr' : '1fr 350px', // Adjust layout for payment form
+                // This will now correctly make the Payment Form take full width
+                gridTemplateColumns: currentStep === CHECKOUT_STEPS.PAYMENT_FORM ? '1fr' : '1fr 350px',
                 gap: '30px',
                 alignItems: 'start'
             }}>
@@ -182,6 +184,7 @@ export default function CheckOut() {
                     />
                 )}
 
+                {/* These steps will now be correctly displayed and take full width */}
                 {currentStep === CHECKOUT_STEPS.PAYMENT_FORM && selectedPayment === PAYMENT_METHODS.COD && (
                     <CashOnDelivery
                         onSubmit={handleOrderSubmit}
@@ -205,6 +208,7 @@ export default function CheckOut() {
                 )}
 
                 {/* Order Summary is always present unless on payment form which takes full width */}
+                {/* This condition will now evaluate to false when on the PAYMENY_FORM step */}
                 {currentStep !== CHECKOUT_STEPS.PAYMENT_FORM && (
                     <OrderSummary
                         orderSummary={orderSummary}

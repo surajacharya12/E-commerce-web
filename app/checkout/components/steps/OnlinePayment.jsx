@@ -2,11 +2,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useCart } from "../../context/CartContext";
-import { useAuth } from "../../hooks/useAuth";
-import API_URL from "../../api/api";
+import { useCart } from "../../../context/CartContext";
+import { useAuth } from "../../../hooks/useAuth";
+import API_URL from "../../../api/api";
+
 import { toast } from "react-toastify";
-import SimpleSuccessTest from "../../components/SimpleSuccessTest";
+import SimpleSuccessTest from "../../../components/SimpleSuccessTest";
 
 export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, selectedStore }) {
     const [paymentDetails, setPaymentDetails] = useState({
