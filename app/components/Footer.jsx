@@ -166,11 +166,11 @@ const Footer = () => (
           © {new Date().getFullYear()} Brand, Inc. &bull; Privacy &bull; Terms
           &bull; Sitemap
         </span>
-        <span className="mt-2 md:mt-0 flex items-center gap-2 text-gray-600 font-medium">
+        {/*<span className="mt-2 md:mt-0 flex items-center gap-2 text-gray-600 font-medium">
           Made with{" "}
           <img src="/vercel.svg" alt="Vercel" className="h-4 filter grayscale" />{" "}
           Next.js & Tailwind CSS
-        </span>
+        </span>*/}
       </div>
     </div>
   </footer>

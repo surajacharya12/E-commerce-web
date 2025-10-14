@@ -5,7 +5,7 @@ import ProductCard from "./ProductCard";
 const ProductGrid = ({ products, filteredProducts, categoryName, subCategoryName, searchTerm, onClearFilters }) => {
   // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 9; // adjust if needed
+  const productsPerPage = 12; // adjust if needed
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
