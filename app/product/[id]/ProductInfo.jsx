@@ -58,8 +58,8 @@ const ProductInfo = ({
                                 <FiStar
                                     key={i}
                                     className={`w-5 h-5 ${i < Math.floor(product.rating.averageRating || 0)
-                                            ? "text-yellow-400 fill-current"
-                                            : "text-slate-300"
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-slate-300"
                                         }`}
                                 />
                             ))}
@@ -79,10 +79,10 @@ const ProductInfo = ({
                         <span className="text-lg font-semibold text-slate-800">Stock:</span>
                         <span
                             className={`px-3 py-1 rounded-full text-sm font-medium ${(product.stock || 0) > 10
-                                    ? "bg-green-100 text-green-800"
-                                    : (product.stock || 0) > 0
-                                        ? "bg-yellow-100 text-yellow-800"
-                                        : "bg-red-100 text-red-800"
+                                ? "bg-green-100 text-green-800"
+                                : (product.stock || 0) > 0
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
                                 }`}
                         >
                             {(product.stock || 0) > 0
@@ -186,8 +186,8 @@ const ProductInfo = ({
                         <path d="M3 3h18v18H3z" />
                     </svg>
                     <div>
-                        <p className="font-semibold text-slate-800">Free Shipping</p>
-                        <p className="text-sm text-slate-600">On orders over Rs. 6,650</p>
+                        <p className="font-semibold text-slate-800">Secure Payments</p>
+                        <p className="text-sm text-slate-600">100% safe & encrypted checkout</p>
                     </div>
                 </div>
 
@@ -196,25 +196,22 @@ const ProductInfo = ({
                         <path d="M3 3h18v18H3z" />
                     </svg>
                     <div>
-                        <p className="font-semibold text-slate-800">Warranty</p>
-                        <p className="text-sm text-slate-600">1 year guarantee</p>
+                        <p className="font-semibold text-slate-800">Quality Assurance</p>
+                        <p className="text-sm text-slate-600">Carefully tested & verified products</p>
                     </div>
                 </div>
 
                 <div className="flex items-center space-x-3 bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                    <svg
-                        className="w-6 h-6 text-orange-500"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
+                    <svg className="w-6 h-6 text-orange-500" viewBox="0 0 24 24" fill="none">
                         <path d="M3 3h18v18H3z" />
                     </svg>
                     <div>
-                        <p className="font-semibold text-slate-800">Returns</p>
-                        <p className="text-sm text-slate-600">30-day policy</p>
+                        <p className="font-semibold text-slate-800">Easy Returns</p>
+                        <p className="text-sm text-slate-600">30-day hassle-free returns</p>
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };
