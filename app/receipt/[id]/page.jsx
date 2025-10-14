@@ -445,24 +445,6 @@ export default function ReceiptPage() {
                     </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-4 mt-8">
-                    <button
-                        onClick={handleDownload}
-                        className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-colors text-lg"
-                    >
-                        <FiDownload className="w-5 h-5" />
-                        Download PDF
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className="flex-1 flex items-center justify-center gap-2 bg-gray-600 text-white py-4 rounded-xl font-semibold hover:bg-gray-700 transition-colors text-lg"
-                    >
-                        <FiPrinter className="w-5 h-5" />
-                        Print Receipt
-                    </button>
-                </div>
-
                 {/* Contact Banner */}
                 <div className="mt-8">
                     <ContactBanner

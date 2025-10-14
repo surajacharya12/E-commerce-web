@@ -168,23 +168,7 @@ const OrderReceipt = ({ order, onClose, onDownload, onPrint }) => {
                     </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-4 p-6 bg-gray-50 rounded-b-2xl">
-                    <button
-                        onClick={onDownload}
-                        className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
-                    >
-                        <FiDownload className="w-5 h-5" />
-                        Download Receipt
-                    </button>
-                    <button
-                        onClick={onPrint}
-                        className="flex-1 flex items-center justify-center gap-2 bg-gray-600 text-white py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
-                    >
-                        <FiPrinter className="w-5 h-5" />
-                        Print Receipt
-                    </button>
-                </div>
+
             </div>
         </div>
     );
