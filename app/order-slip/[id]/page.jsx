@@ -203,7 +203,11 @@ export default function OrderSlipPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-8 mt-10">
             <div className="max-w-4xl mx-auto px-4">
+                <OrderSlipHeader
+                    onBack={() => router.push("/orders")}
 
+
+                />
 
                 {/* Order Slip */}
                 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
