@@ -15,32 +15,44 @@ const ProductInfo = ({
 }) => {
     return (
         <div className="space-y-6">
-            {/* ===== CATEGORY / BRAND / VARIANT TAGS ===== */}
+            {/* ===== CATEGORY / BRAND / COLOR / SIZE TAGS ===== */}
             <div>
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                     {product.proCategoryId?.name && (
-                        <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
+                        <span key="category-tag" className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
                             {product.proCategoryId.name}
                         </span>
                     )}
                     {product.proSubCategoryId?.name && (
-                        <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">
+                        <span key="subcategory-tag" className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">
                             {product.proSubCategoryId.name}
                         </span>
                     )}
                     {product.proBrandId?.name && (
-                        <span className="px-3 py-1 bg-pink-100 text-pink-700 text-sm font-medium rounded-full">
+                        <span key="brand-tag" className="px-3 py-1 bg-pink-100 text-pink-700 text-sm font-medium rounded-full">
                             {product.proBrandId.name}
                         </span>
                     )}
-                    {product.proVariantTypeId?.name && (
-                        <span className="px-3 py-1 bg-teal-100 text-teal-700 text-sm font-medium rounded-full">
-                            {product.proVariantTypeId.name}
+                    {product.colors?.length > 0 && (
+                        <span key="colors-tag" className="px-3 py-1 bg-amber-100 text-amber-700 text-sm font-medium rounded-full">
+                            Colors:{" "}
+                            {product.colors.map((color, index) => (
+                                <span key={color.id || index} className="inline-block">
+                                    {color.name}
+                                    {index < product.colors.length - 1 && ", "}
+                                </span>
+                            ))}
                         </span>
                     )}
-                    {product.proVariantId?.length > 0 && (
-                        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-sm font-medium rounded-full">
-                            {product.proVariantId.map((v) => v.name).join(", ")}
+                    {product.sizes?.length > 0 && (
+                        <span key="sizes-tag" className="px-3 py-1 bg-teal-100 text-teal-700 text-sm font-medium rounded-full">
+                            Sizes:{" "}
+                            {product.sizes.map((size, index) => (
+                                <span key={size.id || index} className="inline-block">
+                                    {size.name}
+                                    {index < product.sizes.length - 1 && ", "}
+                                </span>
+                            ))}
                         </span>
                     )}
                 </div>
@@ -56,7 +68,7 @@ const ProductInfo = ({
                         <div className="flex">
                             {[...Array(5)].map((_, i) => (
                                 <FiStar
-                                    key={i}
+                                    key={i} // Key for static array map is fine with index
                                     className={`w-5 h-5 ${i < Math.floor(product.rating.averageRating || 0)
                                         ? "text-yellow-400 fill-current"
                                         : "text-slate-300"

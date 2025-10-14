@@ -8,19 +8,19 @@ const ActiveFiltersBar = ({
   categories,
   subCategories,
   brands,
-  variantTypes,
-  variants,
+  colors,                 // Renamed from variantTypes
+  sizes,                  // Renamed from variants
   selectedCategories,
   selectedSubCategories,
   selectedBrands,
-  selectedVariantTypes,
-  selectedVariants,
+  selectedColors,         // Renamed from selectedVariantTypes
+  selectedSizes,          // Renamed from selectedVariants
   selectedRatings,
   setSelectedCategories,
   setSelectedSubCategories,
   setSelectedBrands,
-  setSelectedVariantTypes,
-  setSelectedVariants,
+  setSelectedColors,      // Renamed from setSelectedVariantTypes
+  setSelectedSizes,       // Renamed from setSelectedVariants
   setSelectedRatings,
   toggleFilter,
   isAnyFilterActive,
@@ -32,7 +32,7 @@ const ActiveFiltersBar = ({
       <div className="flex items-center space-x-2">
         <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
           <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1 0 013 12V7a4 4 0 014-4z" />
           </svg>
         </div>
         <span className="text-sm font-bold text-slate-700">Active Filters:</span>
@@ -162,18 +162,23 @@ const ActiveFiltersBar = ({
         );
       })}
 
-      {selectedVariantTypes && selectedVariantTypes.map((id) => {
-        const vt = (variantTypes || []).find((v) => v._id === id);
+      {/* Active Color Filters */}
+      {selectedColors && selectedColors.map((id) => {
+        const color = (colors || []).find((c) => c._id === id);
         return (
-          vt && (
+          color && (
             <span
               key={id}
               className="bg-fuchsia-100 text-fuchsia-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center"
             >
-              {vt.type || vt.name}
+              <div
+                className="w-3 h-3 rounded-full mr-1"
+                style={{ backgroundColor: color.hexCode || '#ccc' }} // Display color swatch
+              ></div>
+              {color.name}
               <button
                 className="ml-1 text-fuchsia-600 hover:text-fuchsia-900"
-                onClick={() => toggleFilter(selectedVariantTypes, setSelectedVariantTypes, id)}
+                onClick={() => toggleFilter(selectedColors, setSelectedColors, id)}
               >
                 &times;
               </button>
@@ -182,18 +187,19 @@ const ActiveFiltersBar = ({
         );
       })}
 
-      {selectedVariants && selectedVariants.map((id) => {
-        const v = (variants || []).find((it) => it._id === id);
+      {/* Active Size Filters */}
+      {selectedSizes && selectedSizes.map((id) => {
+        const size = (sizes || []).find((s) => s._id === id);
         return (
-          v && (
+          size && (
             <span
               key={id}
               className="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center"
             >
-              {v.name}
+              {size.name}
               <button
                 className="ml-1 text-rose-600 hover:text-rose-900"
-                onClick={() => toggleFilter(selectedVariants, setSelectedVariants, id)}
+                onClick={() => toggleFilter(selectedSizes, setSelectedSizes, id)}
               >
                 &times;
               </button>

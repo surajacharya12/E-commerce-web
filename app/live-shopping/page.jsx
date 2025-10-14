@@ -22,12 +22,12 @@ const ProductListingContent = () => {
   const subCategoryName = searchParams.get('subCategoryName');
   const urlSearchTerm = searchParams.get('search');
 
-  // Filters data
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [variantTypes, setVariantTypes] = useState([]);
-  const [variants, setVariants] = useState([]);
+  // Filters data - now comprehensive lists from dedicated APIs
+  const [allCategories, setAllCategories] = useState([]);
+  const [allSubCategories, setAllSubCategories] = useState([]);
+  const [allBrands, setAllBrands] = useState([]);
+  const [allColors, setAllColors] = useState([]); // Renamed for clarity
+  const [allSizes, setAllSizes] = useState([]);   // Renamed for clarity
 
   // Selected filters
   const [priceRange, setPriceRange] = useState(0);
@@ -35,8 +35,8 @@ const ProductListingContent = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
-  const [selectedVariantTypes, setSelectedVariantTypes] = useState([]);
-  const [selectedVariants, setSelectedVariants] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);     // Renamed from selectedVariantTypes
+  const [selectedSizes, setSelectedSizes] = useState([]);       // Renamed from selectedVariants
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [searchTerm, setSearchTerm] = useState(urlSearchTerm || "");
 
@@ -53,93 +53,76 @@ const ProductListingContent = () => {
     setSelectedCategories([]);
     setSelectedSubCategories([]);
     setSelectedBrands([]);
-    setSelectedVariantTypes([]);
-    setSelectedVariants([]);
+    setSelectedColors([]);
+    setSelectedSizes([]);
     setSelectedRatings([]);
     setSearchTerm("");
+    // Also clear URL parameters for categories/subcategories if they were active
+    window.history.pushState({}, '', '/live-shopping');
   };
 
-  // --- Fetch Products ---
+  // --- Fetch Products and Initial Filters Data ---
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchAllInitialData = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(`${API_URL}/products`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const [
+          productsRes,
+          categoriesRes,
+          subCategoriesRes,
+          brandsRes,
+          colorsRes,
+          sizesRes
+        ] = await Promise.all([
+          fetch(`${API_URL}/products`),
+          fetch(`${API_URL}/categories`),
+          fetch(`${API_URL}/subcategories`),
+          fetch(`${API_URL}/brands`),
+          fetch(`${API_URL}/colors`), // Fetch all colors
+          fetch(`${API_URL}/sizes`),   // Fetch all sizes
+        ]);
 
-        const result = await response.json();
-        if (result.success) {
-          const data = result.data;
-          setProducts(data);
+        const productsData = await productsRes.json();
+        const categoriesData = await categoriesRes.json();
+        const subCategoriesData = await subCategoriesRes.json();
+        const brandsData = await brandsRes.json();
+        const colorsData = await colorsRes.json();
+        const sizesData = await sizesRes.json();
 
-          const extractUnique = (data, keyFn) => {
-            // keyFn may return a single populated object or an array of populated objects
-            const items = data.flatMap(p => {
-              const v = keyFn(p);
-              if (!v) return [];
-              if (Array.isArray(v)) return v.filter(Boolean);
-              return [v];
-            })
-            // Normalize so every item has _id (fallback to id)
-            .map(item => {
-              if (!item) return null;
-              const id = item._id || item.id || (item._id === 0 ? 0 : undefined);
-              if (!id) return null;
-              // return a shallow clone with guaranteed _id
-              return { ...item, _id: id };
-            })
-            .filter(Boolean);
-
-            return [...new Map(items.map(item => [item._id, item])).values()];
-          };
-
-          setCategories(extractUnique(data, p => p.proCategoryId));
-          setSubCategories(extractUnique(data, p => p.proSubCategoryId));
-          setBrands(extractUnique(data, p => p.proBrandId));
-          setVariantTypes(extractUnique(data, p => p.proVariantTypeId));
-          setVariants(extractUnique(data, p => p.proVariantId));
-
-          const prices = data.map(p => p.offerPrice || p.price).filter(p => typeof p === "number");
+        if (productsData.success) {
+          setProducts(productsData.data);
+          const prices = productsData.data.map(p => p.offerPrice || p.price).filter(p => typeof p === "number");
           const maxPriceValue = prices.length > 0 ? Math.max(...prices) : 1000;
-
           setMaxPrice(maxPriceValue);
           setPriceRange(maxPriceValue);
-
-          // Pre-select filters based on URL parameters
-          if (categoryId) {
-            setSelectedCategories([categoryId]);
-          }
-          if (subCategoryId) {
-            setSelectedSubCategories([subCategoryId]);
-          }
         } else {
-          setError(result.message || "Failed to fetch products.");
+          setError(productsData.message || "Failed to fetch products.");
         }
+
+        // Populate filter options from their dedicated APIs
+        if (categoriesData.success) setAllCategories(categoriesData.data);
+        if (subCategoriesData.success) setAllSubCategories(subCategoriesData.data);
+        if (brandsData.success) setAllBrands(brandsData.data);
+        if (colorsData.success) setAllColors(colorsData.data); // Set all colors here
+        if (sizesData.success) setAllSizes(sizesData.data);     // Set all sizes here
+
+        // Pre-select filters based on URL parameters
+        if (categoryId) {
+          setSelectedCategories([categoryId]);
+        }
+        if (subCategoryId) {
+          setSelectedSubCategories([subCategoryId]);
+        }
+
       } catch (e) {
         setError(e.message);
+        console.error("Error fetching initial data:", e);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchAllInitialData();
   }, [categoryId, subCategoryId]);
-
-  // Ensure we have a full list of variants (in case products don't include populated variant objects)
-  useEffect(() => {
-    const fetchVariants = async () => {
-      try {
-        const res = await fetch(`${API_URL}/variants`);
-        if (!res.ok) throw new Error('Failed to fetch variants');
-        const result = await res.json();
-        if (result.success) {
-          setVariants(result.data || []);
-        }
-      } catch (e) {
-        // silent fail - variants may already be set from products
-        console.warn('Could not fetch variants:', e.message);
-      }
-    };
-    fetchVariants();
-  }, []);
 
   // Update search term when URL parameter changes
   useEffect(() => {
@@ -156,16 +139,29 @@ const ProductListingContent = () => {
       if (selectedCategories.length > 0 && !selectedCategories.includes(product.proCategoryId?._id)) return false;
       if (selectedSubCategories.length > 0 && !selectedSubCategories.includes(product.proSubCategoryId?._id)) return false;
       if (selectedBrands.length > 0 && !selectedBrands.includes(product.proBrandId?._id)) return false;
-      if (selectedVariantTypes.length > 0 && !selectedVariantTypes.includes(product.proVariantTypeId?._id)) return false;
-      if (selectedVariants.length > 0) {
-        // product.proVariantId can be an array (schema) or a populated single object
-        const productVariantIds = Array.isArray(product.proVariantId)
-          ? product.proVariantId.map(v => (v && (v._id || v)) )
-          : (product.proVariantId ? [product.proVariantId._id || product.proVariantId] : []);
 
-        const hasMatch = productVariantIds.some(id => selectedVariants.includes(id));
-        if (!hasMatch) return false;
+      // Filter by Color
+      if (selectedColors.length > 0) {
+        // Ensure product.colors exists and is an array
+        const productColorIds = Array.isArray(product.colors)
+          ? product.colors.map(c => (c && (c._id || c))) // Extract ID from populated object or use as-is if just ID
+          : (product.colors ? [product.colors._id || product.colors] : []); // Handle single populated object or ID
+
+        const hasColorMatch = productColorIds.some(id => selectedColors.includes(id));
+        if (!hasColorMatch) return false;
       }
+
+      // Filter by Size
+      if (selectedSizes.length > 0) {
+        // Ensure product.sizes exists and is an array
+        const productSizeIds = Array.isArray(product.sizes)
+          ? product.sizes.map(s => (s && (s._id || s))) // Extract ID from populated object or use as-is if just ID
+          : (product.sizes ? [product.sizes._id || product.sizes] : []); // Handle single populated object or ID
+
+        const hasSizeMatch = productSizeIds.some(id => selectedSizes.includes(id));
+        if (!hasSizeMatch) return false;
+      }
+
       if (selectedRatings.length > 0 && !selectedRatings.some(minRating => (product.rating?.averageRating || 0) >= minRating)) return false;
 
       // Search filter
@@ -178,7 +174,7 @@ const ProductListingContent = () => {
 
       return true;
     });
-  }, [products, priceRange, selectedCategories, selectedSubCategories, selectedBrands, selectedVariantTypes, selectedVariants, selectedRatings, searchTerm]);
+  }, [products, priceRange, selectedCategories, selectedSubCategories, selectedBrands, selectedColors, selectedSizes, selectedRatings, searchTerm]);
 
   const isAnyFilterActive = useMemo(() => {
     return (
@@ -186,12 +182,14 @@ const ProductListingContent = () => {
       selectedCategories.length > 0 ||
       selectedSubCategories.length > 0 ||
       selectedBrands.length > 0 ||
-      selectedVariantTypes.length > 0 ||
-      selectedVariants.length > 0 ||
+      selectedColors.length > 0 ||
+      selectedSizes.length > 0 ||
       selectedRatings.length > 0 ||
-      searchTerm.trim().length > 0
+      searchTerm.trim().length > 0 ||
+      !!categoryName || // Check if categoryName from URL is active
+      !!subCategoryName // Check if subCategoryName from URL is active
     );
-  }, [priceRange, maxPrice, selectedCategories, selectedSubCategories, selectedBrands, selectedVariantTypes, selectedVariants, selectedRatings, searchTerm]);
+  }, [priceRange, maxPrice, selectedCategories, selectedSubCategories, selectedBrands, selectedColors, selectedSizes, selectedRatings, searchTerm, categoryName, subCategoryName]);
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (error) return <div className="flex justify-center items-center h-screen text-red-600">Error: {error}</div>;
@@ -244,7 +242,7 @@ const ProductListingContent = () => {
           {/* Filter Count Badge */}
           {isAnyFilterActive && (
             <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
-              {(selectedCategories.length + selectedSubCategories.length + selectedBrands.length + selectedRatings.length + (priceRange < maxPrice ? 1 : 0))}
+              {(selectedCategories.length + selectedSubCategories.length + selectedBrands.length + selectedColors.length + selectedSizes.length + selectedRatings.length + (priceRange < maxPrice ? 1 : 0) + (searchTerm.trim().length > 0 ? 1 : 0))}
             </div>
           )}
         </div>
@@ -290,22 +288,22 @@ const ProductListingContent = () => {
             priceRange={priceRange}
             maxPrice={maxPrice}
             setPriceRange={setPriceRange}
-            categories={categories}
-            subCategories={subCategories}
-            brands={brands}
-            variantTypes={variantTypes}
-            variants={variants}
+            categories={allCategories} // Using comprehensive list
+            subCategories={allSubCategories} // Using comprehensive list
+            brands={allBrands}       // Using comprehensive list
+            colors={allColors}                   // Using comprehensive list
+            sizes={allSizes}                     // Using comprehensive list
             selectedCategories={selectedCategories}
             selectedSubCategories={selectedSubCategories}
             selectedBrands={selectedBrands}
-            selectedVariantTypes={selectedVariantTypes}
-            selectedVariants={selectedVariants}
+            selectedColors={selectedColors}
+            selectedSizes={selectedSizes}
             selectedRatings={selectedRatings}
             setSelectedCategories={setSelectedCategories}
             setSelectedSubCategories={setSelectedSubCategories}
             setSelectedBrands={setSelectedBrands}
-            setSelectedVariantTypes={setSelectedVariantTypes}
-            setSelectedVariants={setSelectedVariants}
+            setSelectedColors={setSelectedColors}
+            setSelectedSizes={setSelectedSizes}
             setSelectedRatings={setSelectedRatings}
             toggleFilter={toggleFilter}
             isAnyFilterActive={isAnyFilterActive}
@@ -358,7 +356,7 @@ const ProductListingContent = () => {
               border: none;
               box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
             }
-            
+
             @keyframes slideDown {
               from {
                 opacity: 0;
@@ -369,7 +367,7 @@ const ProductListingContent = () => {
                 transform: translateY(0);
               }
             }
-            
+
             .animate-slideDown {
               animation: slideDown 0.3s ease-out;
             }
@@ -420,11 +418,11 @@ const ProductListingContent = () => {
           </div>
 
           {/* --- Other Filters --- */}
-          <FilterSection title="Categories" items={categories} selectedItems={selectedCategories} setList={setSelectedCategories} toggleFilter={toggleFilter} />
-          <FilterSection title="SubCategories" items={subCategories} selectedItems={selectedSubCategories} setList={setSelectedSubCategories} toggleFilter={toggleFilter} />
-          <FilterSection title="Brands" items={brands} selectedItems={selectedBrands} setList={setSelectedBrands} toggleFilter={toggleFilter} />
-          <FilterSection title="Variant Types" items={variantTypes} selectedItems={selectedVariantTypes} setList={setSelectedVariantTypes} toggleFilter={toggleFilter} labelKey="type" />
-          <FilterSection title="Variants" items={variants} selectedItems={selectedVariants} setList={setSelectedVariants} toggleFilter={toggleFilter} />
+          <FilterSection sectionTitle="Categories" items={allCategories} selectedItems={selectedCategories} setList={setSelectedCategories} toggleFilter={toggleFilter} />
+          <FilterSection sectionTitle="SubCategories" items={allSubCategories} selectedItems={selectedSubCategories} setList={setSelectedSubCategories} toggleFilter={toggleFilter} />
+          <FilterSection sectionTitle="Brands" items={allBrands} selectedItems={selectedBrands} setList={setSelectedBrands} toggleFilter={toggleFilter} />
+          <FilterSection sectionTitle="Colors" items={allColors} selectedItems={selectedColors} setList={setSelectedColors} toggleFilter={toggleFilter} />
+          <FilterSection sectionTitle="Sizes" items={allSizes} selectedItems={selectedSizes} setList={setSelectedSizes} toggleFilter={toggleFilter} />
 
           {/* Mobile Apply Filters Button */}
           <div className="lg:hidden mt-6 pt-6 border-t border-slate-200">
