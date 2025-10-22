@@ -3,6 +3,7 @@
 import React from "react";
 import { FiShoppingCart, FiStar } from "react-icons/fi";
 import ExpandableDescription from "../../../components/ExpandableDescription";
+import BuyNowButton from "../../components/BuyNowButton";
 
 const ProductInfo = ({
     product,
@@ -179,15 +180,11 @@ const ProductInfo = ({
                         )}
                     </button>
 
-                    <button
-                        onClick={handleBuyNow}
-                        disabled={(product.stock || 0) === 0}
+                    <BuyNowButton
+                        product={product}
+                        quantity={quantity}
                         className="flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-2xl hover:shadow-xl disabled:bg-gray-400 disabled:from-gray-400 disabled:to-gray-400 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
-                    >
-                        <span>
-                            {(product.stock || 0) === 0 ? "Out of Stock" : "Buy Now"}
-                        </span>
-                    </button>
+                    />
                 </div>
             </div>
 

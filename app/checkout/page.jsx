@@ -11,6 +11,8 @@ import PaymentMethodStep from "./components/PaymentMethodStep";
 import CashOnDelivery from "./components/steps/CashOnDelivery";
 import OnlinePayment from "./components/steps/OnlinePayment";
 import OrderSummary from "./components/OrderSummary"; // New summary component
+import CouponInput from "../components/CouponInput";
+import AvailableCoupons from "../components/AvailableCoupons";
 
 export const PAYMENT_METHODS = {
     COD: "cashOnDelivery",
@@ -35,6 +37,7 @@ export default function CheckOut() {
     const [selectedPayment, setSelectedPayment] = useState(null);
     const [storeLocations, setStoreLocations] = useState([]);
     const [loadingStores, setLoadingStores] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
 
     const { cart, loading: cartLoading } = useCart();
     const { isLoggedIn, loading: authLoading } = useAuth();
@@ -43,6 +46,11 @@ export default function CheckOut() {
     const getDeliveryFee = () => {
         if (!selectedDelivery) return 0;
         return selectedDelivery === DELIVERY_METHODS.HOME ? 150 : 100;
+    };
+
+    const getDiscountAmount = () => {
+        if (!appliedCoupon) return 0;
+        return appliedCoupon.discountAmount || 0;
     };
 
     const orderSummary = {
@@ -55,7 +63,9 @@ export default function CheckOut() {
         })),
         subtotal: cart.totalAmount || 0,
         deliveryFee: getDeliveryFee(),
-        total: (cart.totalAmount || 0) + getDeliveryFee(),
+        discount: getDiscountAmount(),
+        total: Math.max(0, (cart.totalAmount || 0) + getDeliveryFee() - getDiscountAmount()),
+        appliedCoupon: appliedCoupon,
     };
 
     useEffect(() => {
@@ -176,12 +186,24 @@ export default function CheckOut() {
                 )}
 
                 {currentStep === CHECKOUT_STEPS.PAYMENT_METHOD && (
-                    <PaymentMethodStep
-                        selectedDelivery={selectedDelivery}
-                        selectedStore={selectedStore}
-                        onPaymentMethodSelect={handlePaymentMethodSelect}
-                        onBack={handleBackToDeliverySelection}
-                    />
+                    <div className="space-y-6">
+                        <PaymentMethodStep
+                            selectedDelivery={selectedDelivery}
+                            selectedStore={selectedStore}
+                            onPaymentMethodSelect={handlePaymentMethodSelect}
+                            onBack={handleBackToDeliverySelection}
+                        />
+
+                        {/* Coupon Input */}
+                        <div className="bg-white rounded-2xl shadow-lg p-6">
+                            <CouponInput
+                                onCouponApplied={setAppliedCoupon}
+                                purchaseAmount={cart.totalAmount || 0}
+                                productIds={cart.items?.map(item => item.productId._id) || []}
+                                appliedCoupon={appliedCoupon}
+                            />
+                        </div>
+                    </div>
                 )}
 
                 {/* These steps will now be correctly displayed and take full width */}

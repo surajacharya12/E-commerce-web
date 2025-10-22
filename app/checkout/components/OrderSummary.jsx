@@ -54,6 +54,16 @@ export default function OrderSummary({ orderSummary, selectedDelivery, getDelive
                         {selectedDelivery ? `₹${getDeliveryFee()}` : 'Select delivery method'}
                     </span>
                 </div>
+                {orderSummary.discount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#16a34a' }}>
+                            Discount ({orderSummary.appliedCoupon?.couponDetails?.couponCode}):
+                        </span>
+                        <span style={{ color: '#16a34a', fontWeight: '600' }}>
+                            -₹{orderSummary.discount.toFixed(2)}
+                        </span>
+                    </div>
+                )}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',

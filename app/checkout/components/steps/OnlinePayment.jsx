@@ -9,7 +9,7 @@ import API_URL from "../../../api/api";
 import { toast } from "react-toastify";
 import SimpleSuccessTest from "../../../components/SimpleSuccessTest";
 
-export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, selectedStore }) {
+export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, selectedStore, isBuyNow = false, buyNowData = null, isCart = false, cartData = null }) {
     const [paymentDetails, setPaymentDetails] = useState({
         cardNumber: "",
         expiryDate: "",
@@ -79,55 +79,107 @@ export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, sel
             // Simulate payment processing
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            // Calculate order totals (tax removed)
-            const subtotal = cart.totalAmount;
-            const currentDeliveryFee = deliveryFee || 0;
-            const total = subtotal + currentDeliveryFee;
+            let subtotal, currentDeliveryFee, total, orderData;
 
-            // Prepare order data for backend
-            const orderData = {
-                userID: userData.id,
-                items: cart.items.map(item => ({
-                    productID: item.productId._id,
-                    productName: item.productId.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                    variant: item.variant || ""
-                })),
-                totalPrice: total,
-                shippingAddress: deliveryMethod === 'storeDelivery' && selectedStore ? {
-                    phone: selectedStore.storePhoneNumber || "N/A",
-                    street: selectedStore.storeLocation,
-                    city: selectedStore.storeLocation,
-                    state: "Nepal",
-                    postalCode: "00000",
-                    country: "Nepal"
-                } : {
-                    phone: "N/A", // Online payment doesn't require phone in this flow
-                    street: paymentDetails.billingAddress || "Online Payment",
-                    city: paymentDetails.city || "Online",
-                    state: "Nepal",
-                    postalCode: paymentDetails.postalCode || "000000",
-                    country: "Nepal"
-                },
-                paymentMethod: "prepaid",
-                deliveryMethod: deliveryMethod || "homeDelivery",
-                deliveryFee: currentDeliveryFee,
-                selectedStore: selectedStore || null,
-                orderTotal: {
-                    subtotal: subtotal,
-                    discount: 0,
+            if (isBuyNow && buyNowData) {
+                // Handle Buy Now order
+                subtotal = buyNowData.product.price * buyNowData.quantity;
+                currentDeliveryFee = deliveryFee || 0;
+                total = subtotal + currentDeliveryFee;
+
+                // Prepare order data for backend
+                orderData = {
+                    userID: userData.id,
+                    items: [{
+                        productID: buyNowData.productId,
+                        productName: buyNowData.product.name,
+                        quantity: buyNowData.quantity,
+                        price: buyNowData.product.price,
+                        selectedColor: buyNowData.selectedColor || null,
+                        selectedSize: buyNowData.selectedSize || null,
+                    }],
+                    totalPrice: total,
+                    shippingAddress: deliveryMethod === 'storeDelivery' && selectedStore ? {
+                        phone: selectedStore.storePhoneNumber || "N/A",
+                        street: selectedStore.storeLocation,
+                        city: selectedStore.storeLocation,
+                        state: "Nepal",
+                        postalCode: "00000",
+                        country: "Nepal"
+                    } : {
+                        phone: "N/A", // Online payment doesn't require phone in this flow
+                        street: paymentDetails.billingAddress || "Online Payment",
+                        city: paymentDetails.city || "Online",
+                        state: "Nepal",
+                        postalCode: paymentDetails.postalCode || "000000",
+                        country: "Nepal"
+                    },
+                    paymentMethod: "prepaid",
+                    deliveryMethod: deliveryMethod || "homeDelivery",
                     deliveryFee: currentDeliveryFee,
-                    total: total
-                }
-            };
+                    selectedStore: selectedStore || null,
+                    orderTotal: {
+                        subtotal: subtotal,
+                        discount: 0,
+                        deliveryFee: currentDeliveryFee,
+                        total: total
+                    }
+                };
+            } else {
+                // Handle regular cart checkout
+                const cartSource = isCart && cartData ? cartData : cart;
+                // Calculate order totals (tax removed)
+                subtotal = cartSource.totalAmount;
+                currentDeliveryFee = deliveryFee || 0;
+                total = subtotal + currentDeliveryFee;
+
+                // Prepare order data for backend
+                orderData = {
+                    userID: userData.id,
+                    items: (isCart && cartData ? cartData.items : cart.items).map(item => ({
+                        productID: isCart && cartData ? item.productId : item.productId._id,
+                        productName: item.name || (item.productId ? item.productId.name : 'Unknown Product'),
+                        quantity: item.quantity,
+                        price: item.price,
+                        variant: item.variant || ""
+                    })),
+                    totalPrice: total,
+                    shippingAddress: deliveryMethod === 'storeDelivery' && selectedStore ? {
+                        phone: selectedStore.storePhoneNumber || "N/A",
+                        street: selectedStore.storeLocation,
+                        city: selectedStore.storeLocation,
+                        state: "Nepal",
+                        postalCode: "00000",
+                        country: "Nepal"
+                    } : {
+                        phone: "N/A", // Online payment doesn't require phone in this flow
+                        street: paymentDetails.billingAddress || "Online Payment",
+                        city: paymentDetails.city || "Online",
+                        state: "Nepal",
+                        postalCode: paymentDetails.postalCode || "000000",
+                        country: "Nepal"
+                    },
+                    paymentMethod: "prepaid",
+                    deliveryMethod: deliveryMethod || "homeDelivery",
+                    deliveryFee: currentDeliveryFee,
+                    selectedStore: selectedStore || null,
+                    orderTotal: {
+                        subtotal: subtotal,
+                        discount: 0,
+                        deliveryFee: currentDeliveryFee,
+                        total: total
+                    }
+                };
+            }
 
             // Submit order to backend
             const response = await axios.post(`${API_URL}/orders`, orderData);
 
             if (response.data.success) {
-                // Clear cart after successful order
-                await clearCart();
+                if (!isBuyNow && !isCart) {
+                    // Clear cart after successful order (only for regular checkout, not unified cart checkout)
+                    await clearCart();
+                }
 
                 // Debug logs
                 console.log("Online Payment successful:", response.data.data);

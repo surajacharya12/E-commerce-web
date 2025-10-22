@@ -8,7 +8,7 @@ import API_URL from "../../../api/api";
 import { toast } from "react-toastify";
 import OrderSuccessAnimation from "../../../components/OrderSuccessAnimation";
 
-export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, selectedStore }) {
+export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, selectedStore, isBuyNow = false, buyNowData = null, isCart = false, cartData = null }) {
     const [codDetails, setCodDetails] = useState({
         name: "",
         phone: "",
@@ -52,53 +52,107 @@ export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, se
         setIsSubmitting(true);
 
         try {
-            // Calculate order totals
-            console.log("🛒 Cart data:", cart);
-            console.log("👤 User data:", userData);
+            let subtotal, currentDeliveryFee, total, orderData;
 
-            const subtotal = cart.totalAmount;
-            const currentDeliveryFee = deliveryFee || 0;
-            const total = subtotal + currentDeliveryFee;
+            if (isBuyNow && buyNowData) {
+                // Handle Buy Now order
+                console.log("🛒 Buy Now data:", buyNowData);
+                console.log("👤 User data:", userData);
 
-            console.log("💰 Order totals:", { subtotal, deliveryFee: currentDeliveryFee, total });
+                subtotal = buyNowData.product.price * buyNowData.quantity;
+                currentDeliveryFee = deliveryFee || 0;
+                total = subtotal + currentDeliveryFee;
 
-            // Prepare order data for backend
-            const orderData = {
-                userID: userData.id,
-                items: cart.items.map(item => ({
-                    productID: item.productId._id,
-                    productName: item.productId.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                    variant: item.variant || ""
-                })),
-                totalPrice: total,
-                shippingAddress: deliveryMethod === 'storeDelivery' && selectedStore ? {
-                    phone: selectedStore.storePhoneNumber || "N/A",
-                    street: selectedStore.storeLocation,
-                    city: selectedStore.storeLocation,
-                    state: "Nepal",
-                    postalCode: "00000",
-                    country: "Nepal"
-                } : {
-                    phone: codDetails.phone,
-                    street: codDetails.address,
-                    city: codDetails.city,
-                    state: "Nepal",
-                    postalCode: codDetails.postalCode,
-                    country: "Nepal"
-                },
-                paymentMethod: "cod",
-                deliveryMethod: deliveryMethod || "homeDelivery",
-                deliveryFee: currentDeliveryFee,
-                selectedStore: selectedStore || null,
-                orderTotal: {
-                    subtotal: subtotal,
-                    discount: 0,
+                console.log("💰 Buy Now totals:", { subtotal, deliveryFee: currentDeliveryFee, total });
+
+                // Prepare order data for backend
+                orderData = {
+                    userID: userData.id,
+                    items: [{
+                        productID: buyNowData.productId,
+                        productName: buyNowData.product.name,
+                        quantity: buyNowData.quantity,
+                        price: buyNowData.product.price,
+                        selectedColor: buyNowData.selectedColor || null,
+                        selectedSize: buyNowData.selectedSize || null,
+                    }],
+                    totalPrice: total,
+                    shippingAddress: deliveryMethod === 'storeDelivery' && selectedStore ? {
+                        phone: selectedStore.storePhoneNumber || "N/A",
+                        street: selectedStore.storeLocation,
+                        city: selectedStore.storeLocation,
+                        state: "Nepal",
+                        postalCode: "00000",
+                        country: "Nepal"
+                    } : {
+                        phone: codDetails.phone,
+                        street: codDetails.address,
+                        city: codDetails.city,
+                        state: "Nepal",
+                        postalCode: codDetails.postalCode,
+                        country: "Nepal"
+                    },
+                    paymentMethod: "cod",
+                    deliveryMethod: deliveryMethod || "homeDelivery",
                     deliveryFee: currentDeliveryFee,
-                    total: total
-                }
-            };
+                    selectedStore: selectedStore || null,
+                    orderTotal: {
+                        subtotal: subtotal,
+                        discount: 0,
+                        deliveryFee: currentDeliveryFee,
+                        total: total
+                    }
+                };
+            } else {
+                // Handle regular cart checkout
+                const cartSource = isCart && cartData ? cartData : cart;
+                console.log("🛒 Cart data:", cartSource);
+                console.log("👤 User data:", userData);
+
+                subtotal = cartSource.totalAmount;
+                currentDeliveryFee = deliveryFee || 0;
+                total = subtotal + currentDeliveryFee;
+
+                console.log("💰 Order totals:", { subtotal, deliveryFee: currentDeliveryFee, total });
+
+                // Prepare order data for backend
+                orderData = {
+                    userID: userData.id,
+                    items: (isCart && cartData ? cartData.items : cart.items).map(item => ({
+                        productID: isCart && cartData ? item.productId : item.productId._id,
+                        productName: item.name || (item.productId ? item.productId.name : 'Unknown Product'),
+                        quantity: item.quantity,
+                        price: item.price,
+                        variant: item.variant || ""
+                    })),
+                    totalPrice: total,
+                    shippingAddress: deliveryMethod === 'storeDelivery' && selectedStore ? {
+                        phone: selectedStore.storePhoneNumber || "N/A",
+                        street: selectedStore.storeLocation,
+                        city: selectedStore.storeLocation,
+                        state: "Nepal",
+                        postalCode: "00000",
+                        country: "Nepal"
+                    } : {
+                        phone: codDetails.phone,
+                        street: codDetails.address,
+                        city: codDetails.city,
+                        state: "Nepal",
+                        postalCode: codDetails.postalCode,
+                        country: "Nepal"
+                    },
+                    paymentMethod: "cod",
+                    deliveryMethod: deliveryMethod || "homeDelivery",
+                    deliveryFee: currentDeliveryFee,
+                    selectedStore: selectedStore || null,
+                    orderTotal: {
+                        subtotal: subtotal,
+                        discount: 0,
+                        deliveryFee: currentDeliveryFee,
+                        total: total
+                    }
+                };
+            }
 
             // Submit order to backend
             console.log("📤 Sending order data:", orderData);
@@ -108,11 +162,13 @@ export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, se
             if (response.data.success) {
                 // Debug logs
                 console.log("✅ COD Order successful:", response.data.data);
-                console.log("🧹 Clearing cart...");
 
-                // Clear cart after successful order
-                await clearCart();
-                console.log("✅ Cart cleared");
+                if (!isBuyNow) {
+                    console.log("🧹 Clearing cart...");
+                    // Clear cart after successful order (only for regular checkout)
+                    await clearCart();
+                    console.log("✅ Cart cleared");
+                }
 
                 console.log("🎬 Setting success animation...");
 
