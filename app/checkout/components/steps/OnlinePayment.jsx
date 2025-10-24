@@ -9,7 +9,7 @@ import API_URL from "../../../api/api";
 import { toast } from "react-toastify";
 import SimpleSuccessTest from "../../../components/SimpleSuccessTest";
 
-export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, selectedStore, isBuyNow = false, buyNowData = null, isCart = false, cartData = null }) {
+export default function OnlinePayment({ onBack, deliveryMethod, deliveryFee, selectedStore, isBuyNow = false, buyNowData = null, isCart = false, cartData = null, appliedCoupon = null, discountAmount = 0 }) {
     const [paymentDetails, setPaymentDetails] = useState({
         cardNumber: "",
         expiryDate: "",

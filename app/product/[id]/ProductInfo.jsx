@@ -4,6 +4,7 @@ import React from "react";
 import { FiShoppingCart, FiStar } from "react-icons/fi";
 import ExpandableDescription from "../../../components/ExpandableDescription";
 import BuyNowButton from "../../components/BuyNowButton";
+import ProductCoupons from "../../../components/ProductCoupons";
 
 const ProductInfo = ({
     product,
@@ -125,6 +126,9 @@ const ProductInfo = ({
                     )}
                 </div>
             </div>
+
+            {/* ===== COUPONS ===== */}
+            <ProductCoupons productId={product._id} productName={product.name} />
 
             {/* ===== DESCRIPTION ===== */}
             <ExpandableDescription

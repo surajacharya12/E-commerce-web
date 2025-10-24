@@ -8,7 +8,7 @@ import API_URL from "../../../api/api";
 import { toast } from "react-toastify";
 import OrderSuccessAnimation from "../../../components/OrderSuccessAnimation";
 
-export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, selectedStore, isBuyNow = false, buyNowData = null, isCart = false, cartData = null }) {
+export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, selectedStore, isBuyNow = false, buyNowData = null, isCart = false, cartData = null, appliedCoupon = null, discountAmount = 0 }) {
     const [codDetails, setCodDetails] = useState({
         name: "",
         phone: "",
@@ -61,7 +61,7 @@ export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, se
 
                 subtotal = buyNowData.product.price * buyNowData.quantity;
                 currentDeliveryFee = deliveryFee || 0;
-                total = subtotal + currentDeliveryFee;
+                total = subtotal - (discountAmount || 0) + currentDeliveryFee;
 
                 console.log("💰 Buy Now totals:", { subtotal, deliveryFee: currentDeliveryFee, total });
 
@@ -96,9 +96,10 @@ export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, se
                     deliveryMethod: deliveryMethod || "homeDelivery",
                     deliveryFee: currentDeliveryFee,
                     selectedStore: selectedStore || null,
+                    appliedCoupon: appliedCoupon || null,
                     orderTotal: {
                         subtotal: subtotal,
-                        discount: 0,
+                        discount: discountAmount || 0,
                         deliveryFee: currentDeliveryFee,
                         total: total
                     }
@@ -111,7 +112,7 @@ export default function CashOnDelivery({ onBack, deliveryMethod, deliveryFee, se
 
                 subtotal = cartSource.totalAmount;
                 currentDeliveryFee = deliveryFee || 0;
-                total = subtotal + currentDeliveryFee;
+                total = subtotal - (discountAmount || 0) + currentDeliveryFee;
 
                 console.log("💰 Order totals:", { subtotal, deliveryFee: currentDeliveryFee, total });
 

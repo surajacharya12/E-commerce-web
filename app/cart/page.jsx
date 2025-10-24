@@ -4,15 +4,18 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiArrowLeft } from "react-icons/fi";
+import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiArrowLeft, FiTag } from "react-icons/fi";
 import { displayPrice } from "../utils/currency";
 import ContactBanner from "../../components/ContactBanner";
+import CartCoupons from "../../components/CartCoupons";
 
 const CartPage = () => {
     const { cart, updateQuantity, removeFromCart, clearCart, loading } = useCart();
     const { isLoggedIn } = useAuth();
     const router = useRouter();
     const [expandedDescriptions, setExpandedDescriptions] = useState({});
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
 
     const toggleDescription = (itemId) => {
         setExpandedDescriptions(prev => ({
@@ -65,11 +68,36 @@ const CartPage = () => {
         if (window.confirm('Are you sure you want to clear your cart?')) {
             try {
                 await clearCart();
+                setAppliedCoupon(null);
+                setDiscountAmount(0);
             } catch (error) {
                 console.error('Error clearing cart:', error);
             }
         }
     };
+
+    const handleCouponApply = async (coupon) => {
+        try {
+            // Calculate discount
+            let discount = 0;
+            if (coupon.discountType === "percentage") {
+                discount = (cart.totalAmount * coupon.discountAmount) / 100;
+            } else {
+                discount = coupon.discountAmount;
+            }
+
+            // Ensure discount doesn't exceed total amount
+            discount = Math.min(discount, cart.totalAmount);
+
+            setAppliedCoupon(coupon);
+            setDiscountAmount(discount);
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+            throw error;
+        }
+    };
+
+    const finalAmount = cart.totalAmount - discountAmount;
 
     if (cart.items.length === 0) {
         return (
@@ -235,11 +263,30 @@ const CartPage = () => {
                         <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
                             <h2 className="text-xl font-bold text-gray-800 mb-6">Order Summary</h2>
 
+                            {/* Coupon Section */}
+                            <div className="mb-6">
+                                <CartCoupons
+                                    cartItems={cart.items}
+                                    onCouponApply={handleCouponApply}
+                                />
+                            </div>
+
                             <div className="space-y-4 mb-6">
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Subtotal ({cart.totalItems} items)</span>
                                     <span className="font-semibold">{displayPrice(cart.totalAmount)}</span>
                                 </div>
+
+                                {appliedCoupon && discountAmount > 0 && (
+                                    <div className="flex justify-between text-green-600">
+                                        <span className="flex items-center gap-1">
+                                            <FiTag className="w-4 h-4" />
+                                            Coupon ({appliedCoupon.couponCode})
+                                        </span>
+                                        <span className="font-semibold">-{displayPrice(discountAmount)}</span>
+                                    </div>
+                                )}
+
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Shipping</span>
                                     <span className="font-semibold text-green-600">Free</span>
@@ -248,9 +295,15 @@ const CartPage = () => {
                                 <div className="flex justify-between text-lg">
                                     <span className="font-bold text-gray-800">Total</span>
                                     <span className="font-bold text-blue-600">
-                                        {displayPrice(cart.totalAmount)}
+                                        {displayPrice(finalAmount)}
                                     </span>
                                 </div>
+
+                                {appliedCoupon && discountAmount > 0 && (
+                                    <div className="text-sm text-green-600 text-center">
+                                        You saved {displayPrice(discountAmount)}!
+                                    </div>
+                                )}
                             </div>
 
                             <button

@@ -8,13 +8,18 @@ import { toast } from "react-toastify";
 // Removed ProductModal - now using unified product detail page
 import FavoriteButton from "../../../components/FavoriteButton";
 import AddToCartButton from "../../../components/AddToCartButton";
+import CouponBadge from "../../../components/CouponBadge";
 import { displayPrice } from "../../utils/currency";
+import { useCoupons } from "../../hooks/useCoupons";
 
 const ExploreProduct = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("");
 
+  // Get product IDs for coupon fetching
+  const productIds = useMemo(() => products.map(p => p._id), [products]);
+  const { getCouponsForProduct } = useCoupons(productIds);
 
   // Removed selectedProduct state - now using unified product detail page
 
@@ -127,6 +132,17 @@ const ExploreProduct = () => {
                       % OFF
                     </div>
                   )}
+
+                {/* Coupon Badge */}
+                {(() => {
+                  const productCoupons = getCouponsForProduct(product._id);
+                  return productCoupons.length > 0 && (
+                    <div className="absolute bottom-4 left-4">
+                      <CouponBadge coupon={productCoupons[0]} size="small" />
+                    </div>
+                  );
+                })()}
+
                 {/* 🔥 FIX: Added 'favorite-toggle-button' class */}
                 <div className="absolute top-4 right-4 favorite-toggle-button">
                   <FavoriteButton productId={product._id} />
@@ -161,6 +177,22 @@ const ExploreProduct = () => {
                     {(product.stock || 0) > 0 ? `${product.stock} left` : 'Out of stock'}
                   </span>
                 </div>
+                {/* Coupon Information */}
+                {(() => {
+                  const productCoupons = getCouponsForProduct(product._id);
+                  return productCoupons.length > 0 && (
+                    <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="text-xs text-green-700 font-medium mb-1">
+                        🎉 {productCoupons.length} coupon{productCoupons.length > 1 ? 's' : ''} available!
+                      </div>
+                      <div className="text-xs text-green-600">
+                        Use code: <span className="font-mono font-bold">{productCoupons[0].couponCode}</span>
+                        {productCoupons.length > 1 && <span> +{productCoupons.length - 1} more</span>}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-bold text-blue-600">
