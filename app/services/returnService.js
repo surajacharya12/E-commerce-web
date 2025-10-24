@@ -22,7 +22,9 @@ class ReturnService {
     try {
       const response = await fetch(`${API_BASE_URL}/returns/create`, {
         method: "POST",
-        headers: this.getAuthHeaders(),
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(returnData),
       });
 
