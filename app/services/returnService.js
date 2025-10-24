@@ -51,20 +51,35 @@ class ReturnService {
         url += `&status=${status}`;
       }
 
+      console.log("🔍 Fetching returns from:", url);
+
       const response = await fetch(url, {
         method: "GET",
         headers: this.getAuthHeaders(),
       });
 
+      console.log("📡 Response status:", response.status, response.statusText);
+
       const data = await response.json();
+      console.log("📦 Response data:", data);
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch returns");
+        throw new Error(
+          data.message || `HTTP ${response.status}: Failed to fetch returns`
+        );
       }
 
       return data;
     } catch (error) {
-      console.error("Error fetching returns:", error);
+      console.error("❌ Error fetching returns:", error);
+
+      // If it's a network error, provide more helpful message
+      if (error.message.includes("fetch")) {
+        throw new Error(
+          "Unable to connect to server. Please check if the backend is running on port 3001."
+        );
+      }
+
       throw error;
     }
   }

@@ -44,10 +44,20 @@ export default function ReturnDetailsPage() {
             setLoading(true);
             setError(null);
 
+            console.log("Loading return details for ID:", returnId);
             const response = await ReturnService.getReturnDetails(returnId);
-            setReturnRequest(response.data);
+            console.log("Return details response:", response);
+
+            if (response && response.data) {
+                setReturnRequest(response.data);
+            } else if (response) {
+                setReturnRequest(response);
+            } else {
+                throw new Error("No return data received");
+            }
         } catch (err) {
-            setError(err.message);
+            console.error("Error loading return details:", err);
+            setError(err.message || "Failed to load return details");
         } finally {
             setLoading(false);
         }
@@ -65,10 +75,7 @@ export default function ReturnDetailsPage() {
         try {
             setCancelling(true);
             await ReturnService.cancelReturn(returnId, userData._id);
-
-            // Refresh the return details
             await loadReturnDetails();
-
             alert("Return request cancelled successfully");
         } catch (err) {
             alert(`Error cancelling return: ${err.message}`);
@@ -89,11 +96,44 @@ export default function ReturnDetailsPage() {
 
     const getReasonDisplayText = (reason) => {
         const reasons = ReturnService.getReturnReasons();
-        const reasonObj = reasons.find(r => r.value === reason);
+        const reasonObj = reasons.find((r) => r.value === reason);
         return reasonObj ? reasonObj.label : reason;
     };
 
-    if (authLoading || loading || !isLoggedIn || !userData) {
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Checking authentication...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isLoggedIn || !userData) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+                <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/20 text-center max-w-md">
+                    <FiUser className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Authentication Required
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                        Please sign in to view your return details.
+                    </p>
+                    <button
+                        onClick={() => router.push("/signin")}
+                        className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300"
+                    >
+                        Sign In
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
                 <div className="text-center">
@@ -109,7 +149,9 @@ export default function ReturnDetailsPage() {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
                 <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/20 text-center max-w-md">
                     <FiX className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Return</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Error Loading Return
+                    </h3>
                     <p className="text-gray-600 mb-4">{error}</p>
                     <button
                         onClick={() => router.back()}
@@ -127,8 +169,12 @@ export default function ReturnDetailsPage() {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
                 <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/20 text-center max-w-md">
                     <FiPackage className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Return Not Found</h3>
-                    <p className="text-gray-600 mb-4">The return request you're looking for doesn't exist.</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Return Not Found
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                        The return request you're looking for doesn't exist.
+                    </p>
                     <button
                         onClick={() => router.push("/returns")}
                         className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300"
@@ -170,7 +216,9 @@ export default function ReturnDetailsPage() {
                                 returnRequest.returnStatus
                             )}`}
                         >
-                            {ReturnService.getStatusDisplayText(returnRequest.returnStatus)}
+                            {ReturnService.getStatusDisplayText(
+                                returnRequest.returnStatus
+                            )}
                         </span>
                     </div>
                 </div>
@@ -180,35 +228,51 @@ export default function ReturnDetailsPage() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Return Information */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Return Information</h2>
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">
+                                Return Information
+                            </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex items-center space-x-3">
                                     <FiCalendar className="w-5 h-5 text-gray-500" />
                                     <div>
-                                        <p className="text-sm text-gray-500">Requested On</p>
-                                        <p className="font-medium text-gray-900">{formatDate(returnRequest.returnDate)}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Requested On
+                                        </p>
+                                        <p className="font-medium text-gray-900">
+                                            {formatDate(returnRequest.returnDate)}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <FiPackage className="w-5 h-5 text-gray-500" />
                                     <div>
-                                        <p className="text-sm text-gray-500">Return Type</p>
-                                        <p className="font-medium text-gray-900 capitalize">{returnRequest.returnType}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Return Type
+                                        </p>
+                                        <p className="font-medium text-gray-900 capitalize">
+                                            {returnRequest.returnType}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <FiDollarSign className="w-5 h-5 text-gray-500" />
                                     <div>
-                                        <p className="text-sm text-gray-500">Return Amount</p>
-                                        <p className="font-medium text-gray-900">₹{returnRequest.returnAmount?.toFixed(2)}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Return Amount
+                                        </p>
+                                        <p className="font-medium text-gray-900">
+                                            ₹{returnRequest.returnAmount?.toFixed(2)}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <FiUser className="w-5 h-5 text-gray-500" />
                                     <div>
-                                        <p className="text-sm text-gray-500">Refund Method</p>
+                                        <p className="text-sm text-gray-500">
+                                            Refund Method
+                                        </p>
                                         <p className="font-medium text-gray-900 capitalize">
-                                            {returnRequest.refundMethod?.replace('_', ' ')}
+                                            {returnRequest.refundMethod?.replace("_", " ")}
                                         </p>
                                     </div>
                                 </div>
@@ -216,8 +280,12 @@ export default function ReturnDetailsPage() {
                                     <div className="flex items-center space-x-3">
                                         <FiCheck className="w-5 h-5 text-gray-500" />
                                         <div>
-                                            <p className="text-sm text-gray-500">Processed On</p>
-                                            <p className="font-medium text-gray-900">{formatDate(returnRequest.processedAt)}</p>
+                                            <p className="text-sm text-gray-500">
+                                                Processed On
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {formatDate(returnRequest.processedAt)}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -225,8 +293,12 @@ export default function ReturnDetailsPage() {
                                     <div className="flex items-center space-x-3">
                                         <FiDollarSign className="w-5 h-5 text-green-500" />
                                         <div>
-                                            <p className="text-sm text-gray-500">Refunded On</p>
-                                            <p className="font-medium text-gray-900">{formatDate(returnRequest.refundedAt)}</p>
+                                            <p className="text-sm text-gray-500">
+                                                Refunded On
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {formatDate(returnRequest.refundedAt)}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -235,51 +307,85 @@ export default function ReturnDetailsPage() {
 
                         {/* Return Details */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Return Details</h2>
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">
+                                Return Details
+                            </h2>
                             <div className="space-y-4">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Reason</p>
-                                    <p className="font-medium text-gray-900">{getReasonDisplayText(returnRequest.returnReason)}</p>
+                                    <p className="font-medium text-gray-900">
+                                        {getReasonDisplayText(returnRequest.returnReason)}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Description</p>
-                                    <p className="text-gray-700">{returnRequest.returnDescription}</p>
+                                    <p className="text-gray-700">
+                                        {returnRequest.returnDescription}
+                                    </p>
                                 </div>
                                 {returnRequest.adminNotes && (
                                     <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                                        <p className="text-sm text-blue-600 font-medium mb-1">Admin Notes</p>
-                                        <p className="text-blue-800">{returnRequest.adminNotes}</p>
+                                        <p className="text-sm text-blue-600 font-medium mb-1">
+                                            Admin Notes
+                                        </p>
+                                        <p className="text-blue-800">
+                                            {returnRequest.adminNotes}
+                                        </p>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        {/* Return Items */}
+                        {/* ✅ Fixed Return Items Section */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Return Items</h2>
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">
+                                Return Items
+                            </h2>
                             <div className="space-y-4">
-                                {returnRequest.items?.map((item, index) => (
-                                    <div key={index} className="border border-gray-200 rounded-xl p-4">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex-1">
-                                                <h3 className="font-semibold text-gray-900">{item.productName}</h3>
-                                                {item.variant && (
-                                                    <p className="text-sm text-gray-600">Variant: {item.variant}</p>
-                                                )}
-                                                <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
-                                                    <span>Return Qty: {item.returnQuantity}</span>
-                                                    <span>Price: ₹{item.price?.toFixed(2)}</span>
-                                                    <span className="capitalize">Condition: {item.condition}</span>
+                                {returnRequest.items && returnRequest.items.length > 0 ? (
+                                    returnRequest.items.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="border border-gray-200 rounded-xl p-4"
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex-1">
+                                                    <h3 className="font-semibold text-gray-900">
+                                                        {item.productName}
+                                                    </h3>
+                                                    {item.variant && (
+                                                        <p className="text-sm text-gray-600">
+                                                            Variant: {item.variant}
+                                                        </p>
+                                                    )}
+                                                    <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                                                        <span>
+                                                            Return Qty: {item.returnQuantity}
+                                                        </span>
+                                                        <span>
+                                                            Price: ₹{item.price?.toFixed(2)}
+                                                        </span>
+                                                        <span className="capitalize">
+                                                            Condition: {item.condition}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-semibold text-gray-900">
+                                                        ₹
+                                                        {(
+                                                            item.price * item.returnQuantity
+                                                        )?.toFixed(2)}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="font-semibold text-gray-900">
-                                                    ₹{(item.price * item.returnQuantity)?.toFixed(2)}
-                                                </p>
-                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <p className="text-gray-600 text-sm">
+                                        No items found for this return request.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -288,13 +394,19 @@ export default function ReturnDetailsPage() {
                     <div className="space-y-6">
                         {/* Status Timeline */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Status Timeline</h3>
+                            <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                Status Timeline
+                            </h3>
                             <div className="space-y-4">
                                 <div className="flex items-center space-x-3">
                                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                                     <div>
-                                        <p className="font-medium text-gray-900">Return Requested</p>
-                                        <p className="text-sm text-gray-500">{formatDate(returnRequest.returnDate)}</p>
+                                        <p className="font-medium text-gray-900">
+                                            Return Requested
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            {formatDate(returnRequest.returnDate)}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -302,8 +414,12 @@ export default function ReturnDetailsPage() {
                                     <div className="flex items-center space-x-3">
                                         <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                                         <div>
-                                            <p className="font-medium text-gray-900">Processed</p>
-                                            <p className="text-sm text-gray-500">{formatDate(returnRequest.processedAt)}</p>
+                                            <p className="font-medium text-gray-900">
+                                                Processed
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {formatDate(returnRequest.processedAt)}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -312,18 +428,26 @@ export default function ReturnDetailsPage() {
                                     <div className="flex items-center space-x-3">
                                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                                         <div>
-                                            <p className="font-medium text-gray-900">Refunded</p>
-                                            <p className="text-sm text-gray-500">{formatDate(returnRequest.refundedAt)}</p>
+                                            <p className="font-medium text-gray-900">
+                                                Refunded
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {formatDate(returnRequest.refundedAt)}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
 
-                                {returnRequest.returnStatus === 'requested' && (
+                                {returnRequest.returnStatus === "requested" && (
                                     <div className="flex items-center space-x-3">
                                         <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
                                         <div>
-                                            <p className="font-medium text-gray-500">Pending Review</p>
-                                            <p className="text-sm text-gray-400">Waiting for approval</p>
+                                            <p className="font-medium text-gray-500">
+                                                Pending Review
+                                            </p>
+                                            <p className="text-sm text-gray-400">
+                                                Waiting for approval
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -331,9 +455,11 @@ export default function ReturnDetailsPage() {
                         </div>
 
                         {/* Actions */}
-                        {returnRequest.returnStatus === 'requested' && (
+                        {returnRequest.returnStatus === "requested" && (
                             <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20">
-                                <h3 className="text-lg font-bold text-gray-900 mb-4">Actions</h3>
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                    Actions
+                                </h3>
                                 <button
                                     onClick={handleCancelReturn}
                                     disabled={cancelling}
@@ -355,9 +481,12 @@ export default function ReturnDetailsPage() {
                         <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
                             <div className="text-center">
                                 <FiAlertCircle className="w-8 h-8 text-indigo-600 mx-auto mb-3" />
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">Need Help?</h3>
+                                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                    Need Help?
+                                </h3>
                                 <p className="text-gray-600 text-sm mb-4">
-                                    Have questions about your return? Our support team is here to help.
+                                    Have questions about your return? Our support team is here
+                                    to help.
                                 </p>
                                 <button
                                     onClick={() => router.push("/customer-service")}
