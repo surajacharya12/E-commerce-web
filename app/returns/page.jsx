@@ -14,9 +14,11 @@ import {
     FiRefreshCw,
 } from "react-icons/fi";
 import ReturnService from "../services/returnService";
+import { useAuth } from "../hooks/useAuth";
 
 export default function ReturnsPage() {
     const router = useRouter();
+    const { isLoggedIn, userData, loading: authLoading } = useAuth();
     const [returns, setReturns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,32 +26,28 @@ export default function ReturnsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    // Get user ID from localStorage or context
-    const [userId, setUserId] = useState(null);
-
     useEffect(() => {
-        // Get user ID from localStorage
-        const storedUserId = localStorage.getItem("userId");
-        if (storedUserId) {
-            setUserId(storedUserId);
-        } else {
-            // Redirect to login if no user ID
-            router.push("/signin");
+        if (!authLoading) {
+            if (!isLoggedIn || !userData) {
+                router.push("/signin");
+            }
         }
-    }, [router]);
+    }, [isLoggedIn, userData, authLoading, router]);
 
     useEffect(() => {
-        if (userId) {
+        if (isLoggedIn && userData && userData._id) {
             loadReturns();
         }
-    }, [userId, selectedStatus, currentPage]);
+    }, [isLoggedIn, userData, selectedStatus, currentPage]);
 
     const loadReturns = async () => {
+        if (!userData || !userData._id) return;
+
         try {
             setLoading(true);
             setError(null);
 
-            const response = await ReturnService.getUserReturns(userId, {
+            const response = await ReturnService.getUserReturns(userData._id, {
                 page: currentPage,
                 limit: 10,
                 status: selectedStatus || undefined,
@@ -88,7 +86,7 @@ export default function ReturnsPage() {
         { value: "cancelled", label: "Cancelled" },
     ];
 
-    if (!userId) {
+    if (authLoading || (!isLoggedIn || !userData)) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
                 <div className="text-center">

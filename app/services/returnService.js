@@ -1,14 +1,28 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+import API_URL from "../api/api";
+
+const API_BASE_URL = API_URL;
 
 class ReturnService {
+  // Get authentication headers
+  static getAuthHeaders() {
+    const token = localStorage.getItem("authToken");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    return headers;
+  }
+
   // Create a new return request
   static async createReturn(returnData) {
     try {
       const response = await fetch(`${API_BASE_URL}/returns/create`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: this.getAuthHeaders(),
         body: JSON.stringify(returnData),
       });
 
@@ -37,9 +51,7 @@ class ReturnService {
 
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: this.getAuthHeaders(),
       });
 
       const data = await response.json();
@@ -60,9 +72,7 @@ class ReturnService {
     try {
       const response = await fetch(`${API_BASE_URL}/returns/${returnId}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: this.getAuthHeaders(),
       });
 
       const data = await response.json();
@@ -85,9 +95,7 @@ class ReturnService {
         `${API_BASE_URL}/returns/${returnId}/cancel`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: this.getAuthHeaders(),
           body: JSON.stringify({ userID: userId }),
         }
       );
@@ -126,9 +134,7 @@ class ReturnService {
         `${API_BASE_URL}/returns/user/${userId}/delivered-orders`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: this.getAuthHeaders(),
         }
       );
 

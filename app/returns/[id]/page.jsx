@@ -16,27 +16,28 @@ import {
     FiAlertCircle,
 } from "react-icons/fi";
 import ReturnService from "../../services/returnService";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function ReturnDetailsPage() {
     const router = useRouter();
     const params = useParams();
     const returnId = params.id;
+    const { isLoggedIn, userData, loading: authLoading } = useAuth();
 
     const [returnRequest, setReturnRequest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [cancelling, setCancelling] = useState(false);
-    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        const storedUserId = localStorage.getItem("userId");
-        if (storedUserId) {
-            setUserId(storedUserId);
-            loadReturnDetails();
-        } else {
-            router.push("/signin");
+        if (!authLoading) {
+            if (!isLoggedIn || !userData) {
+                router.push("/signin");
+            } else {
+                loadReturnDetails();
+            }
         }
-    }, [returnId, router]);
+    }, [isLoggedIn, userData, authLoading, returnId, router]);
 
     const loadReturnDetails = async () => {
         try {
@@ -53,7 +54,7 @@ export default function ReturnDetailsPage() {
     };
 
     const handleCancelReturn = async () => {
-        if (!returnRequest || !userId) return;
+        if (!returnRequest || !userData || !userData._id) return;
 
         const confirmed = window.confirm(
             "Are you sure you want to cancel this return request? This action cannot be undone."
@@ -63,7 +64,7 @@ export default function ReturnDetailsPage() {
 
         try {
             setCancelling(true);
-            await ReturnService.cancelReturn(returnId, userId);
+            await ReturnService.cancelReturn(returnId, userData._id);
 
             // Refresh the return details
             await loadReturnDetails();
@@ -92,7 +93,7 @@ export default function ReturnDetailsPage() {
         return reasonObj ? reasonObj.label : reason;
     };
 
-    if (!userId || loading) {
+    if (authLoading || loading || !isLoggedIn || !userData) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
                 <div className="text-center">
